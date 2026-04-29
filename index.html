@@ -4536,7 +4536,10 @@ function fcFixHint(provider, status, detail) {
 function updateAfcChip() {
   const chip = document.getElementById("afc-chip");
   if (!chip) return;
-  if (state.autoFactCheck && fcKey()) {
+  const cfg = window.APP_CONFIG || {};
+  // Auto fact-check works either with a local key OR via the deployed proxy.
+  const haveBackend = !!fcKey() || !!cfg.PROXY_MODE;
+  if (state.autoFactCheck && haveBackend) {
     chip.style.display = "inline-flex";
     chip.classList.toggle("live", !state.afcBusy);
     chip.classList.toggle("busy", state.afcBusy);
@@ -4565,10 +4568,10 @@ function queueAutoFactCheck(chunk) {
   if (!state.pointsEnabled) return;
   if (!state.timerRunning) return;          // only while a turn is live
   if (state.currentSide === "both") return; // can't attribute during cross-fire
-  const key = fcKey();
-  if (!key) return;
 
   const cfg = window.APP_CONFIG || {};
+  // Need either a local key OR a deployed proxy with the key on the server.
+  if (!fcKey() && !cfg.PROXY_MODE) return;
   const minChars = cfg.AUTO_FACTCHECK_MIN_CHARS ?? 8;
   const minWords = cfg.AUTO_FACTCHECK_MIN_WORDS ?? 2;
   const cooldown = cfg.AUTO_FACTCHECK_COOLDOWN_MS ?? 1200;
@@ -5294,8 +5297,10 @@ async function factCheckQuery(q) {
   if (!q) { toast("Enter something to check.", "warn"); return; }
   const res = document.getElementById("fc-results");
   const key = fcKey();
+  const cfg = window.APP_CONFIG || {};
   const providerName = "Groq";
-  const hasAI = !!key;
+  // In proxy mode the browser has no key but the deployed proxy does — still "AI".
+  const hasAI = !!key || !!cfg.PROXY_MODE;
   res.innerHTML = `<div class="fc-loading">${hasAI ? `Asking ${providerName}…` : "Searching Wikipedia…"}</div>`;
 
   let html = "";
@@ -5304,7 +5309,6 @@ async function factCheckQuery(q) {
   //    pipeline as auto fact-check (Wikipedia evidence + topic + citations).
   if (hasAI) {
     try {
-      const cfg = window.APP_CONFIG || {};
       const evidence = cfg.USE_WIKIPEDIA_GROUNDING ? await fetchWikiContext(q) : [];
       const promptOpts = {
         topic: state.topic || (document.getElementById("custom-topic")?.value || "").trim(),
