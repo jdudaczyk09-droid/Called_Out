@@ -1,0 +1,25 @@
+# Secrets — keep these out of git
+.env
+.env.local
+.env.*.local
+config.local.js
+
+# config.js IS committed (toggles only, no keys). config.local.js is local-only.
+# If a previous version of this repo committed config.js with keys, run:
+#   git rm --cached config.js && git commit -m "stop tracking secrets"
+
+# Vercel
+.vercel
+.vercel/
+
+# Node
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
