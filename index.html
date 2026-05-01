@@ -2019,8 +2019,21 @@
   .mode-table td b { color: var(--text); }
 </style>
 <script src="config.js" onerror="console.warn('config.js not loaded.')"></script>
-<!-- Optional local-only override file. 404 here is fine in production. -->
-<script src="config.local.js" onerror="/* no local override; using committed defaults */"></script>
+<!-- Optional local-only override file. Loaded synchronously via XHR so a
+     404 in production doesn't trigger Chrome's strict-MIME script error. -->
+<script>
+  (function () {
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "config.local.js", false); // sync — fine for a tiny file
+      xhr.send();
+      if (xhr.status >= 200 && xhr.status < 300) {
+        // Execute the IIFE so it merges into window.APP_CONFIG
+        new Function(xhr.responseText)();
+      }
+    } catch (e) { /* expected in production — using committed defaults */ }
+  })();
+</script>
 </head>
 <body>
 <div id="flash-overlay" class="flash-overlay"></div>
@@ -4564,14 +4577,25 @@ function splitIntoClaims(text) {
 
 /* Public: enqueue a fresh speech chunk for claim detection + fact-check. */
 function queueAutoFactCheck(chunk) {
-  if (!state.autoFactCheck) return;
-  if (!state.pointsEnabled) return;
-  if (!state.timerRunning) return;          // only while a turn is live
-  if (state.currentSide === "both") return; // can't attribute during cross-fire
+  // Diagnostic: log every gate so you can see in DevTools console why a chunk got dropped.
+  const dbg = (msg) => console.log("[AFC]", msg, {
+    chunk: (chunk || "").slice(0, 60),
+    autoFactCheck: state.autoFactCheck,
+    pointsEnabled: state.pointsEnabled,
+    timerRunning: state.timerRunning,
+    currentSide: state.currentSide,
+    haveKey: !!fcKey(),
+    proxyMode: !!(window.APP_CONFIG || {}).PROXY_MODE,
+  });
+  if (!state.autoFactCheck) { dbg("skipped: auto fact-check is off"); return; }
+  if (!state.pointsEnabled) { dbg("skipped: points are disabled for this debate"); return; }
+  if (!state.timerRunning)  { dbg("skipped: turn timer not running"); return; }
+  if (state.currentSide === "both") { dbg("skipped: cross-fire (no side to attribute)"); return; }
 
   const cfg = window.APP_CONFIG || {};
   // Need either a local key OR a deployed proxy with the key on the server.
-  if (!fcKey() && !cfg.PROXY_MODE) return;
+  if (!fcKey() && !cfg.PROXY_MODE) { dbg("skipped: no fcKey and PROXY_MODE off"); return; }
+  dbg("accepted → enqueueing claim check");
   const minChars = cfg.AUTO_FACTCHECK_MIN_CHARS ?? 8;
   const minWords = cfg.AUTO_FACTCHECK_MIN_WORDS ?? 2;
   const cooldown = cfg.AUTO_FACTCHECK_COOLDOWN_MS ?? 1200;
@@ -5033,16 +5057,20 @@ async function runClaimCheck(sentence, opts) {
 }
 
 async function runOneFactCheck(sentence, side, opts) {
+  console.log("[AFC] runOneFactCheck called", { sentence: sentence.slice(0, 80), side });
   // Still relevant? If side or turn state changed, drop silently.
-  if (!state.autoFactCheck || !state.timerRunning) return;
-  if (state.currentSide !== side && state.currentSide !== "both") return;
+  if (!state.autoFactCheck || !state.timerRunning) {
+    console.log("[AFC] runOneFactCheck dropped (autoFactCheck/timerRunning changed)");
+    return;
+  }
+  if (state.currentSide !== side && state.currentSide !== "both") {
+    console.log("[AFC] runOneFactCheck dropped (side changed)", { wanted: side, current: state.currentSide });
+    return;
+  }
 
   state.afcBusy = true; updateAfcChip();
   try {
     const cfg = window.APP_CONFIG || {};
-    // Pull Wikipedia evidence in parallel with letting the LLM start (we still
-    // need to await it before the call — so do them sequentially but with a
-    // short timeout. ~1.5s typical, often <600ms cached).
     const evidence = cfg.USE_WIKIPEDIA_GROUNDING ? await fetchWikiContext(sentence) : [];
 
     const promptOpts = {
@@ -5050,9 +5078,12 @@ async function runOneFactCheck(sentence, side, opts) {
       context: (opts && opts.context) || [],
       evidence
     };
+    console.log("[AFC] calling runClaimCheck →", { promptOpts });
     const r = await runClaimCheck(sentence, promptOpts);
+    console.log("[AFC] runClaimCheck returned", r);
     const claims = normalizeClaims(r);
-    if (!claims.length) return;
+    console.log("[AFC] normalized claims:", claims);
+    if (!claims.length) { console.log("[AFC] no claims extracted — banner skipped"); return; }
 
     const minConf = cfg.AUTO_FACTCHECK_CONFIDENCE ?? 0.7;
     const lowB = cfg.CONSENSUS_BORDERLINE_LOW ?? 0.6;
