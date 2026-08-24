@@ -23,8 +23,9 @@ The app ships as static HTML plus a Python serverless backend in `/api/` (Vercel
 
 1. Push the repo to GitHub.
 2. Import the project in the Vercel dashboard.
-3. Under **Settings → Environment Variables**, add:
-   - `GROQ_API_KEY` — your Groq key.
+3. Under **Settings → Environment Variables**, add either:
+   - `GROQ_API_KEY` — a single Groq key, or
+   - `GROQ_API_KEYS` — a comma-separated pool of Groq keys (e.g. `gsk_aaa...,gsk_bbb...,gsk_ccc...`). Each request tries a random key from the pool and fails over to the next one only if that key comes back rate-limited (HTTP 429) — a cheap way to multiply your effective free-tier capacity across several Groq accounts instead of paying for a higher tier on one. If both vars are set, `GROQ_API_KEYS` wins.
 4. Hit **Deploy**.
 
 The committed `config.js` has `PROXY_MODE: true`, so deployed builds automatically route fetches through `/api/groq-chat` and `/api/groq-whisper`. Don't commit `config.local.js` — it overrides PROXY_MODE for your local machine only.
