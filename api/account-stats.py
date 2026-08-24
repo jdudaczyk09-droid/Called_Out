@@ -1,7 +1,10 @@
 """Aggregate stats for the signed-in account — same response shape as
 api/league-stats.py so the client can reuse one renderer for both."""
 import os
+import sys
 from http.server import BaseHTTPRequestHandler
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from _lib.util import send_json, send_cors_preflight
 from _lib.db import get_conn

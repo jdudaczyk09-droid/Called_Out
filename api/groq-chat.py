@@ -4,7 +4,11 @@ this function injects a Groq API key and forwards the request, so no key
 ever reaches the browser.
 
 Supports a multi-key pool (GROQ_API_KEYS) — see api/_lib/groqkeys.py."""
+import os
+import sys
 from http.server import BaseHTTPRequestHandler
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import requests
 

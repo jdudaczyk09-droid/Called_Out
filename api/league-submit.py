@@ -6,7 +6,11 @@ password. Don't put anything sensitive behind it. Requires a Postgres
 database attached to the Vercel project (Storage → Postgres, powered by
 Neon) so POSTGRES_URL is set as an env var."""
 import json
+import os
+import sys
 from http.server import BaseHTTPRequestHandler
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from _lib.util import send_json, send_cors_preflight, read_json_body
 from _lib.db import get_conn

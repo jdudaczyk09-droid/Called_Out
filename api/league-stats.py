@@ -3,8 +3,12 @@ most-common fallacies, scores by judge persona, and a recent-rounds feed.
 Backs the League Dashboard screen.
 
 No real auth — see api/league-submit.py for the same caveat."""
+import os
+import sys
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from _lib.util import send_json, send_cors_preflight
 from _lib.db import get_conn

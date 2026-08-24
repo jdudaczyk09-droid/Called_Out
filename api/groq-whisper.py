@@ -3,7 +3,11 @@ NOTE on Hobby tier: request body is capped at 4.5 MB. Upload-mode chunks
 audio to ~2-min slices (~3.8 MB at 16 kHz mono) to stay under the cap.
 
 Supports a multi-key pool (GROQ_API_KEYS) — see api/_lib/groqkeys.py."""
+import os
+import sys
 from http.server import BaseHTTPRequestHandler
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import requests
 

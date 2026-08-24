@@ -1,7 +1,10 @@
 """Validates the session token and returns the current user — used on page
 load to restore a logged-in session from the token stored in the browser."""
 import os
+import sys
 from http.server import BaseHTTPRequestHandler
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from _lib.util import send_json, send_cors_preflight
 from _lib.db import get_conn
