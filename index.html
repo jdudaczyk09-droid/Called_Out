@@ -68,14 +68,22 @@
 
   header.topbar {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 28px;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 28px 0;
     border-bottom: 2px solid var(--border-strong);
     background: var(--bg);
     position: sticky;
     top: 0;
     z-index: 10;
+  }
+
+  .topbar-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
   }
 
   .logo {
@@ -2157,17 +2165,79 @@
   .account-area {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     font-family: var(--font-mono);
     font-size: 11px;
   }
+  .account-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border-strong);
+    cursor: pointer;
+    flex-shrink: 0;
+    background: var(--surface-2);
+  }
+  .account-avatar-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--accent);
+  }
+
+  /* ========= Profile modal ========= */
+  .profile-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .profile-avatar-preview {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border-strong);
+    background: var(--surface-2);
+    flex-shrink: 0;
+  }
+  .profile-avatar-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--accent);
+  }
+  .profile-avatar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ========= Online Debate room code ========= */
+  .online-room-code {
+    font-family: var(--font-mono);
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-align: center;
+    padding: 20px;
+    margin: 16px 0;
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius);
+  }
   .account-name {
     color: var(--text-dim);
-    max-width: 120px;
+    max-width: 180px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    cursor: pointer;
   }
+  .account-name:hover { color: var(--text); }
 
   .afc-toggle-chip {
     display: inline-flex;
@@ -2213,10 +2283,9 @@
     display: flex;
     gap: 3px;
     align-items: flex-end;
-    margin-left: 28px;
-    flex: 1;
     overflow-x: auto;
     scrollbar-width: none;
+    padding-bottom: 2px;
   }
   .topnav::-webkit-scrollbar { display: none; }
   .topnav-btn {
@@ -2495,14 +2564,32 @@
 </aside>
 <div class="app">
   <header class="topbar">
-    <div class="logo">
-      <div class="logo-mark"></div>
-      <span class="logo-name">Verdict AI</span>
-      <span class="tagline" data-i18n="header.tagline">structured debate · live fact-check</span>
+    <div class="topbar-main">
+      <div class="logo">
+        <div class="logo-mark"></div>
+        <span class="logo-name">Verdict AI</span>
+        <span class="tagline" data-i18n="header.tagline">structured debate · live fact-check</span>
+      </div>
+      <div id="header-meta">
+        <div id="account-area" class="account-area">
+          <button class="btn btn-sm" id="account-btn" onclick="openAuthModal('login')">Log in</button>
+        </div>
+        <select id="ui-lang" class="whisper-pill" style="cursor:pointer; border-radius:6px;" onchange="setUILang(this.value)" title="Interface language">
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+        </select>
+        <span id="afc-chip" class="afc-toggle-chip" title="Auto fact-check status" style="display:none;">
+          <span class="afc-dot"></span><span id="afc-chip-text">auto fact-check</span>
+        </span>
+        <span id="whisper-pill" class="whisper-pill" title="Whisper transcription status" style="display:none;">
+          <span class="wp-dot"></span><span id="whisper-pill-text">whisper</span>
+        </span>
+      </div>
     </div>
     <nav class="topnav" id="topnav">
       <button class="topnav-btn active" data-screen="screen-setup"    onclick="navTo('screen-setup')" data-i18n="nav.setup">Setup</button>
       <button class="topnav-btn"        data-screen="screen-debate"   onclick="navTo('screen-debate')" id="nav-debate" disabled data-i18n="nav.debate">Debate</button>
+      <button class="topnav-btn"        data-screen="screen-online"   onclick="navTo('screen-online')" data-i18n="nav.online">Online</button>
       <button class="topnav-btn"        data-screen="screen-upload"   onclick="navTo('screen-upload')" data-i18n="nav.upload">Upload</button>
       <button class="topnav-btn"        data-screen="screen-results"  onclick="navTo('screen-results')" id="nav-results" disabled data-i18n="nav.results">Results</button>
       <button class="topnav-btn"        data-screen="screen-learn"    onclick="navTo('screen-learn')" data-i18n="nav.learn">Learn</button>
@@ -2512,21 +2599,6 @@
       <button class="topnav-btn"        data-screen="screen-league"   onclick="navTo('screen-league')" data-i18n="nav.league">League</button>
       <button class="topnav-btn"        data-screen="screen-how"      onclick="navTo('screen-how')" data-i18n="nav.how">How it works</button>
     </nav>
-    <div id="header-meta">
-      <div id="account-area" class="account-area">
-        <button class="btn btn-sm" id="account-btn" onclick="openAuthModal('login')">Log in</button>
-      </div>
-      <select id="ui-lang" class="whisper-pill" style="cursor:pointer; border-radius:6px;" onchange="setUILang(this.value)" title="Interface language">
-        <option value="en">EN</option>
-        <option value="es">ES</option>
-      </select>
-      <span id="afc-chip" class="afc-toggle-chip" title="Auto fact-check status" style="display:none;">
-        <span class="afc-dot"></span><span id="afc-chip-text">auto fact-check</span>
-      </span>
-      <span id="whisper-pill" class="whisper-pill" title="Whisper transcription status" style="display:none;">
-        <span class="wp-dot"></span><span id="whisper-pill-text">whisper</span>
-      </span>
-    </div>
   </header>
 
   <main>
@@ -2948,6 +3020,146 @@
         <button class="btn" onclick="restartSame()">Rematch</button>
         <button class="btn" onclick="exportResults()">Export transcript</button>
         <button class="btn btn-primary" onclick="newDebate()">New debate</button>
+      </div>
+    </section>
+
+    <!-- ONLINE DEBATE SCREEN -->
+    <section class="screen" id="screen-online">
+      <div class="upload-wrap">
+        <div class="eyebrow" data-i18n="online.eyebrow">Online Debate</div>
+        <h1 data-i18n="online.title">Debate someone on another device.</h1>
+        <p class="upload-lead" data-i18n="online.lead">Two accounts, two devices, one shared round. There's no shared audio channel between devices yet — for crossfire or discussion phases, coordinate by call or in person; Verdict AI syncs the turns, transcript, and scores between you.</p>
+
+        <div class="card upload-card" id="online-loggedout" style="display:none;">
+          <h3>Sign in first</h3>
+          <p style="color:var(--text-dim); font-size:13px; margin-bottom:12px;">Online debate needs an account on both sides so we know who's who.</p>
+          <button class="btn btn-primary" onclick="openAuthModal('login')">Log in or sign up</button>
+        </div>
+
+        <div id="online-lobby" style="display:none;">
+          <div class="card upload-card">
+            <h3>Host a room</h3>
+            <div class="form-grid two-col">
+              <div class="field">
+                <label>Format</label>
+                <select id="online-mode"></select>
+              </div>
+              <div class="field">
+                <label>Seconds per turn (Casual only)</label>
+                <input type="number" id="online-turn-seconds" value="120" min="15" max="600" step="15" />
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label>Topic</label>
+                <input type="text" id="online-topic" placeholder="e.g. Resolved: The United States federal government should significantly reform its immigration policy." />
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="hostOnlineRoom()">Create room</button>
+          </div>
+          <div class="card upload-card">
+            <h3>Join a room</h3>
+            <div class="field">
+              <label>Room code</label>
+              <input type="text" id="online-join-code" placeholder="e.g. K7P2QX" maxlength="12" style="text-transform:uppercase;" />
+            </div>
+            <button class="btn btn-primary" onclick="joinOnlineRoom()">Join</button>
+          </div>
+          <div id="online-lobby-error" class="upload-error" style="display:none;"></div>
+        </div>
+
+        <div id="online-room-wrap" style="display:none;">
+          <div class="card upload-card" id="online-waiting" style="display:none;">
+            <h3>Waiting for your opponent</h3>
+            <p style="font-size:13px; color:var(--text-dim);">Share this code — they enter it under "Join a room" on their own device:</p>
+            <div class="online-room-code" id="online-room-code-display"></div>
+            <button class="btn" onclick="leaveOnlineRoom()">Cancel</button>
+          </div>
+
+          <div id="online-active" style="display:none;">
+            <div class="stage">
+              <div class="stage-head">
+                <div class="topic-display">
+                  <div class="mode-badge" id="online-mode-badge">—</div>
+                  <div class="topic-label">Topic</div>
+                  <h2 id="online-topic-display">—</h2>
+                </div>
+              </div>
+              <div class="phase-banner" id="online-phase-banner">
+                <div class="pb-left">
+                  <div class="pb-index" id="online-phase-index">—</div>
+                  <div class="pb-name" id="online-phase-name">—</div>
+                </div>
+                <div id="online-phase-side" style="font-size:12px; color:var(--text-dim); font-weight:500;"></div>
+              </div>
+              <div class="timer-wrap">
+                <div class="timer-label" id="online-timer-label">—</div>
+                <div class="timer" id="online-timer">00:00</div>
+                <div class="timer-bar"><div class="timer-fill" id="online-timer-fill"></div></div>
+                <div class="controls" id="online-your-controls" style="display:none;">
+                  <button class="btn" id="online-btn-start" onclick="startOnlineTurn()">Start turn</button>
+                  <button class="btn" id="online-btn-pause" onclick="pauseOnlineTurn()" disabled>Pause</button>
+                  <button class="btn" onclick="endOnlineTurn()">End turn →</button>
+                </div>
+                <div class="controls" id="online-crossfire-controls" style="display:none;">
+                  <button class="btn btn-primary" onclick="continueOnlineCrossfire()">Continue</button>
+                </div>
+                <div id="online-waiting-turn" style="display:none; color:var(--text-dim); font-size:13px; text-align:center;">Waiting for your opponent to finish their turn…</div>
+              </div>
+            </div>
+
+            <div class="results-scores" style="margin-bottom:16px;">
+              <div class="result-card" id="online-card-a">
+                <h3 id="online-name-a">—</h3>
+                <div class="rc-side" id="online-sidelabel-a">—</div>
+                <div class="big-score" id="online-score-a">0</div>
+                <div class="score-controls">
+                  <button class="score-btn plus" onclick="scoreOnline('a','fact',1,'fact')"><span class="val">+fact</span><span class="lbl">verified</span></button>
+                  <button class="score-btn minus" onclick="scoreOnline('a','wrong',-1,'wrong')"><span class="val">−wrong</span><span class="lbl">false claim</span></button>
+                  <button class="score-btn fallacy" onclick="scoreOnline('a','fallacy',-2,'fallacy')"><span class="val">−fallacy</span><span class="lbl">bad logic</span></button>
+                </div>
+              </div>
+              <div class="result-card" id="online-card-b">
+                <h3 id="online-name-b">—</h3>
+                <div class="rc-side" id="online-sidelabel-b">—</div>
+                <div class="big-score" id="online-score-b">0</div>
+                <div class="score-controls">
+                  <button class="score-btn plus" onclick="scoreOnline('b','fact',1,'fact')"><span class="val">+fact</span><span class="lbl">verified</span></button>
+                  <button class="score-btn minus" onclick="scoreOnline('b','wrong',-1,'wrong')"><span class="val">−wrong</span><span class="lbl">false claim</span></button>
+                  <button class="score-btn fallacy" onclick="scoreOnline('b','fallacy',-2,'fallacy')"><span class="val">−fallacy</span><span class="lbl">bad logic</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="subtitles-wrap">
+              <div class="subtitles-head">
+                <div class="sub-head-left"><span class="mic-indicator" id="online-mic-dot"></span><h3>Live</h3></div>
+              </div>
+              <div class="subtitles empty" id="online-live-subtitles">Nothing yet.</div>
+            </div>
+
+            <div class="transcript-log">
+              <h3>Transcript so far</h3>
+              <div id="online-transcript-list"></div>
+            </div>
+
+            <div class="results-actions">
+              <button class="btn btn-danger" onclick="endOnlineDebateNow()">End debate</button>
+            </div>
+          </div>
+
+          <div id="online-ended" style="display:none;">
+            <div class="results-hero">
+              <div class="winner-banner">Debate complete</div>
+              <div class="winner-name" id="online-final-score">—</div>
+            </div>
+            <div class="transcript-log">
+              <h3>Full transcript</h3>
+              <div id="online-final-transcript"></div>
+            </div>
+            <div class="results-actions">
+              <button class="btn btn-primary" onclick="leaveOnlineRoom()">Back to lobby</button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -3445,6 +3657,36 @@
   </div>
 </div>
 
+<!-- Profile modal -->
+<div class="modal-wrap" id="profile-modal">
+  <div class="modal">
+    <h2>Your profile</h2>
+    <div class="modal-sub">Visible only to you right now — profiles aren't shown to other users yet.</div>
+    <div class="profile-avatar-row">
+      <img id="profile-avatar-preview" class="profile-avatar-preview" src="" alt="" style="display:none;" />
+      <div id="profile-avatar-placeholder" class="profile-avatar-preview profile-avatar-fallback">?</div>
+      <div class="profile-avatar-actions">
+        <input type="file" id="profile-avatar-file" accept="image/*" style="display:none;" onchange="handleAvatarFile(this)" />
+        <button class="btn btn-sm" type="button" onclick="document.getElementById('profile-avatar-file').click()">Change photo</button>
+        <button class="btn btn-sm btn-ghost" type="button" id="profile-avatar-remove" onclick="removeAvatar()" style="display:none;">Remove</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Display name</label>
+      <input type="text" id="profile-name" maxlength="60" />
+    </div>
+    <div class="field">
+      <label>Bio</label>
+      <textarea id="profile-bio" maxlength="500" rows="4" placeholder="A sentence or two — your events, your league, whatever you want."></textarea>
+    </div>
+    <div id="profile-error" class="upload-error" style="display:none;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" type="button" onclick="closeProfileModal()">Cancel</button>
+      <button class="btn btn-primary" type="button" id="profile-save-btn" onclick="saveProfile()">Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toasts"></div>
 
 <div id="cookie-banner" class="cookie-banner" style="display:none;">
@@ -3767,7 +4009,7 @@ const FALLACIES = [
    ========================================================================= */
 const TRANSLATIONS = {
   en: {
-    "nav.setup": "Setup", "nav.debate": "Debate", "nav.upload": "Upload", "nav.results": "Results",
+    "nav.setup": "Setup", "nav.debate": "Debate", "nav.online": "Online", "nav.upload": "Upload", "nav.results": "Results",
     "nav.learn": "Learn", "nav.casebuilder": "Case Builder", "nav.casecheck": "Case Checker",
     "nav.progress": "Progress", "nav.league": "League", "nav.how": "How it works",
     "header.tagline": "structured debate · live fact-check",
@@ -3799,9 +4041,12 @@ const TRANSLATIONS = {
     "league.eyebrow": "League Dashboard",
     "league.title": "See how your whole league is doing.",
     "league.lead": "For coaches and tournament directors. Enter a league code to see aggregate stats across everyone submitting under it. Needs a Postgres database attached to this deployment — see the README.",
+    "online.eyebrow": "Online Debate",
+    "online.title": "Debate someone on another device.",
+    "online.lead": "Two accounts, two devices, one shared round. There's no shared audio channel between devices yet — for crossfire or discussion phases, coordinate by call or in person; Verdict AI syncs the turns, transcript, and scores between you.",
   },
   es: {
-    "nav.setup": "Configurar", "nav.debate": "Debate", "nav.upload": "Subir", "nav.results": "Resultados",
+    "nav.setup": "Configurar", "nav.debate": "Debate", "nav.online": "En línea", "nav.upload": "Subir", "nav.results": "Resultados",
     "nav.learn": "Aprender", "nav.casebuilder": "Construir caso", "nav.casecheck": "Revisar caso",
     "nav.progress": "Progreso", "nav.league": "Liga", "nav.how": "Cómo funciona",
     "header.tagline": "debate estructurado · verificación en vivo",
@@ -3833,6 +4078,9 @@ const TRANSLATIONS = {
     "league.eyebrow": "Panel de liga",
     "league.title": "Mira cómo le va a toda tu liga.",
     "league.lead": "Para entrenadores y directores de torneo. Ingresa un código de liga para ver estadísticas agregadas de todos los que envían resultados con ese código. Requiere una base de datos Postgres conectada a este despliegue — consulta el README.",
+    "online.eyebrow": "Debate en línea",
+    "online.title": "Debate con alguien en otro dispositivo.",
+    "online.lead": "Dos cuentas, dos dispositivos, una ronda compartida. Todavía no hay un canal de audio compartido entre dispositivos — para las fases de crossfire o discusión, coordínense por llamada o en persona; Verdict AI sincroniza los turnos, la transcripción y los puntajes entre ustedes.",
   },
 };
 
@@ -3956,6 +4204,12 @@ const state = {
   authToken: null,
   authUser: null,
 
+  // Online Debate — two signed-in users, two devices, polling-synced room
+  onlineRoom: null,
+  onlinePollTimer: null,
+  onlineLiveText: "",
+  onlineRecog: null,
+
   // Whisper transcription state (opt-in)
   useWhisper: false,
   whisperRecorder: null,
@@ -3998,6 +4252,7 @@ function init() {
   renderFallacyLibrary();
   renderGlossary();
   populateCaseBuilderFormats();
+  populateOnlineModes();
   const footerYearEl = document.getElementById("footer-year");
   if (footerYearEl) footerYearEl.textContent = new Date().getFullYear();
   const tosDateEl = document.getElementById("tos-date");
@@ -4392,6 +4647,7 @@ function navTo(id) {
     if (typeof renderProgressScreen === "function") renderProgressScreen();
     if (state.authToken && typeof loadAccountStats === "function") loadAccountStats();
   }
+  if (id === "screen-online" && typeof renderOnlineScreen === "function") renderOnlineScreen();
 }
 
 function renderRoundIndicator() {
@@ -5063,15 +5319,27 @@ async function loadAuthSession() {
   updateAccountUI();
 }
 
+function avatarHtml(user) {
+  if (user && user.avatar) {
+    return `<img class="account-avatar" src="${escapeHtml(user.avatar)}" onclick="openProfileModal()" alt="" title="Edit profile" />`;
+  }
+  const initial = ((user && user.displayName) || "?").trim().charAt(0).toUpperCase() || "?";
+  return `<span class="account-avatar account-avatar-fallback" onclick="openProfileModal()" title="Edit profile">${escapeHtml(initial)}</span>`;
+}
+
 function updateAccountUI() {
   const area = document.getElementById("account-area");
   if (!area) return;
   if (state.authUser) {
     area.innerHTML = `
-      <span class="account-name" title="${escapeHtml(state.authUser.email)}">${escapeHtml(state.authUser.displayName)}</span>
+      ${avatarHtml(state.authUser)}
+      <span class="account-name" title="${escapeHtml(state.authUser.email)}" onclick="openProfileModal()">${escapeHtml(state.authUser.displayName)}</span>
       <button class="btn btn-sm" onclick="logout()">Log out</button>`;
   } else {
     area.innerHTML = `<button class="btn btn-sm" id="account-btn" onclick="openAuthModal('login')">Log in</button>`;
+  }
+  if (document.getElementById("screen-online")?.classList.contains("active") && typeof renderOnlineScreen === "function") {
+    renderOnlineScreen();
   }
 }
 
@@ -5139,11 +5407,484 @@ async function submitAuth() {
 }
 
 function logout() {
+  if (state.onlineRoom) {
+    stopOnlinePolling();
+    stopOnlineMic();
+    state.onlineRoom = null;
+    state.onlineLiveText = "";
+  }
   state.authToken = null;
   state.authUser = null;
   try { localStorage.removeItem("verdictai_token"); } catch (_) {}
   updateAccountUI();
   toast("Logged out.", "warn");
+}
+
+/* =========================================================================
+   PROFILE — display name, bio, avatar. Avatar is resized/cropped to a
+   160x160 JPEG client-side before upload, so it stores as a small data: URI
+   with no separate file-storage service to configure.
+   ========================================================================= */
+let pendingAvatarDataUrl = null; // null = untouched this session; "" = explicitly removed
+
+function openProfileModal() {
+  if (!state.authUser) return;
+  document.getElementById("profile-error").style.display = "none";
+  pendingAvatarDataUrl = null;
+  document.getElementById("profile-name").value = state.authUser.displayName || "";
+  document.getElementById("profile-bio").value = state.authUser.bio || "";
+  renderProfileAvatarPreview(state.authUser.avatar || "");
+  document.getElementById("profile-modal").classList.add("visible");
+}
+
+function closeProfileModal() {
+  document.getElementById("profile-modal").classList.remove("visible");
+}
+
+function renderProfileAvatarPreview(avatarUrl) {
+  const img = document.getElementById("profile-avatar-preview");
+  const placeholder = document.getElementById("profile-avatar-placeholder");
+  const removeBtn = document.getElementById("profile-avatar-remove");
+  if (avatarUrl) {
+    img.src = avatarUrl;
+    img.style.display = "";
+    placeholder.style.display = "none";
+    removeBtn.style.display = "";
+  } else {
+    img.style.display = "none";
+    placeholder.style.display = "flex";
+    const nameField = document.getElementById("profile-name").value || state.authUser?.displayName || "?";
+    placeholder.textContent = nameField.trim().charAt(0).toUpperCase() || "?";
+    removeBtn.style.display = "none";
+  }
+}
+
+function handleAvatarFile(input) {
+  const file = input.files && input.files[0];
+  input.value = ""; // allow re-picking the same file later
+  if (!file) return;
+  if (!file.type.startsWith("image/")) { toast("Pick an image file.", "warn"); return; }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const SIZE = 160;
+      const canvas = document.createElement("canvas");
+      canvas.width = SIZE;
+      canvas.height = SIZE;
+      const ctx = canvas.getContext("2d");
+      // Cover-crop to a centered square so any aspect ratio becomes a clean circle.
+      const scale = Math.max(SIZE / img.width, SIZE / img.height);
+      const w = img.width * scale, h = img.height * scale;
+      ctx.drawImage(img, (SIZE - w) / 2, (SIZE - h) / 2, w, h);
+      pendingAvatarDataUrl = canvas.toDataURL("image/jpeg", 0.75);
+      renderProfileAvatarPreview(pendingAvatarDataUrl);
+    };
+    img.onerror = () => toast("Couldn't read that image.", "error");
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeAvatar() {
+  pendingAvatarDataUrl = "";
+  renderProfileAvatarPreview("");
+}
+
+async function saveProfile() {
+  const errEl = document.getElementById("profile-error");
+  errEl.style.display = "none";
+  const displayName = document.getElementById("profile-name").value.trim();
+  const bio = document.getElementById("profile-bio").value;
+  if (!displayName) {
+    errEl.textContent = "Display name can't be empty.";
+    errEl.style.display = "";
+    return;
+  }
+
+  const body = { displayName, bio };
+  if (pendingAvatarDataUrl !== null) body.avatar = pendingAvatarDataUrl;
+
+  const btn = document.getElementById("profile-save-btn");
+  btn.disabled = true;
+  try {
+    const resp = await fetch("/api/account-profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + state.authToken },
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data?.error || "Couldn't save your profile.");
+    state.authUser = data.user;
+    updateAccountUI();
+    closeProfileModal();
+    toast("Profile updated.", "success");
+  } catch (e) {
+    errEl.textContent = e.message || String(e);
+    errEl.style.display = "";
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* =========================================================================
+   ONLINE DEBATE — two signed-in users, two devices, one shared room.
+   No WebSockets on this stack, so this polls api/room-state every 2s and
+   posts api/room-action for turn/score/timer changes. The server doesn't
+   know format phase lists (that's DEBATE_MODES, client-side only) — it
+   just stores whatever phase index/side/timer this client computes, the
+   same way local mode already renders phases from DEBATE_MODES directly.
+   Each device runs its own local speech-to-text only while it's that
+   device's turn; the finished text gets relayed to the room on "End turn".
+   ========================================================================= */
+function populateOnlineModes() {
+  const sel = document.getElementById("online-mode");
+  if (!sel) return;
+  sel.innerHTML = Object.entries(DEBATE_MODES)
+    .filter(([_, m]) => !m.hidden)
+    .map(([key, m]) => `<option value="${key}">${escapeHtml(m.name)}</option>`).join("");
+}
+
+function renderOnlineScreen() {
+  const loggedOutEl = document.getElementById("online-loggedout");
+  const lobbyEl = document.getElementById("online-lobby");
+  const roomWrapEl = document.getElementById("online-room-wrap");
+  if (!loggedOutEl) return;
+  if (!state.authUser) {
+    loggedOutEl.style.display = "";
+    lobbyEl.style.display = "none";
+    roomWrapEl.style.display = "none";
+    return;
+  }
+  if (state.onlineRoom) {
+    loggedOutEl.style.display = "none";
+    lobbyEl.style.display = "none";
+    roomWrapEl.style.display = "";
+    renderOnlineRoom();
+  } else {
+    loggedOutEl.style.display = "none";
+    lobbyEl.style.display = "";
+    roomWrapEl.style.display = "none";
+  }
+}
+
+async function hostOnlineRoom() {
+  const errEl = document.getElementById("online-lobby-error");
+  errEl.style.display = "none";
+  const mode = document.getElementById("online-mode").value;
+  const topic = document.getElementById("online-topic").value.trim();
+  const turnSeconds = parseInt(document.getElementById("online-turn-seconds").value) || 120;
+  if (!topic) {
+    errEl.textContent = "Enter a topic first.";
+    errEl.style.display = "";
+    return;
+  }
+  try {
+    const resp = await fetch("/api/room-create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + state.authToken },
+      body: JSON.stringify({ mode, topic, turnSeconds, displayName: state.authUser.displayName }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data?.error || "Couldn't create room.");
+    state.onlineRoom = data.room;
+    startOnlinePolling();
+    renderOnlineScreen();
+  } catch (e) {
+    errEl.textContent = e.message || String(e);
+    errEl.style.display = "";
+  }
+}
+
+async function joinOnlineRoom() {
+  const errEl = document.getElementById("online-lobby-error");
+  errEl.style.display = "none";
+  const code = document.getElementById("online-join-code").value.trim();
+  if (!code) {
+    errEl.textContent = "Enter a room code.";
+    errEl.style.display = "";
+    return;
+  }
+  try {
+    const resp = await fetch("/api/room-join", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + state.authToken },
+      body: JSON.stringify({ roomCode: code, displayName: state.authUser.displayName }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data?.error || "Couldn't join room.");
+    state.onlineRoom = data.room;
+    startOnlinePolling();
+    renderOnlineScreen();
+  } catch (e) {
+    errEl.textContent = e.message || String(e);
+    errEl.style.display = "";
+  }
+}
+
+function leaveOnlineRoom() {
+  stopOnlinePolling();
+  stopOnlineMic();
+  state.onlineRoom = null;
+  state.onlineLiveText = "";
+  renderOnlineScreen();
+}
+
+function startOnlinePolling() {
+  stopOnlinePolling();
+  state.onlinePollTimer = setInterval(pollOnlineRoomState, 2000);
+}
+
+function stopOnlinePolling() {
+  if (state.onlinePollTimer) { clearInterval(state.onlinePollTimer); state.onlinePollTimer = null; }
+}
+
+async function pollOnlineRoomState() {
+  if (!state.onlineRoom || !state.authToken) return;
+  try {
+    const resp = await fetch("/api/room-state?code=" + encodeURIComponent(state.onlineRoom.roomCode), {
+      headers: { Authorization: "Bearer " + state.authToken },
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data?.error || "Room error");
+    state.onlineRoom = data.room;
+    renderOnlineRoom();
+  } catch (e) {
+    console.warn("Room poll failed:", e.message || e);
+  }
+}
+
+async function onlineRoomAction(body) {
+  const resp = await fetch("/api/room-action", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + state.authToken },
+    body: JSON.stringify(Object.assign({ roomCode: state.onlineRoom.roomCode }, body)),
+  });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data?.error || "Room action failed");
+  state.onlineRoom = data.room;
+  renderOnlineRoom();
+  return data.room;
+}
+
+function currentOnlinePhaseName(room) {
+  const mode = DEBATE_MODES[room.mode] || DEBATE_MODES.casual;
+  if (mode.phases && mode.phases[room.phaseIndex]) return mode.phases[room.phaseIndex].name;
+  return `Round ${Math.floor(room.phaseIndex / 2) + 1}`;
+}
+
+/* Mirrors local mode's nextTurn() logic, but reports the result instead of
+   mutating local state directly — the server is the shared source of truth. */
+function computeNextOnlinePhase(room) {
+  const mode = DEBATE_MODES[room.mode] || DEBATE_MODES.casual;
+  if (mode.phases) {
+    const nextIndex = room.phaseIndex + 1;
+    if (nextIndex >= mode.phases.length) return { ended: true };
+    const phase = mode.phases[nextIndex];
+    return { ended: false, nextPhaseIndex: nextIndex, nextSide: phase.side, nextTurnSeconds: phase.seconds };
+  }
+  // Casual mode has no fixed round count online — alternate indefinitely until someone ends it.
+  const nextSide = room.currentSide === "a" ? "b" : "a";
+  return { ended: false, nextPhaseIndex: room.phaseIndex + 1, nextSide, nextTurnSeconds: room.turnSeconds };
+}
+
+async function startOnlineTurn() {
+  if (!state.onlineRoom) return;
+  try {
+    await onlineRoomAction({ action: "start_turn" });
+    startOnlineMic();
+  } catch (e) {
+    toast("Couldn't start turn: " + (e.message || e), "error");
+  }
+}
+
+async function pauseOnlineTurn() {
+  if (!state.onlineRoom) return;
+  try {
+    await onlineRoomAction({ action: "pause_turn" });
+    stopOnlineMic();
+  } catch (e) {
+    toast("Couldn't pause: " + (e.message || e), "error");
+  }
+}
+
+async function endOnlineTurn() {
+  if (!state.onlineRoom) return;
+  stopOnlineMic();
+  const room = state.onlineRoom;
+  const phaseName = currentOnlinePhaseName(room);
+  const next = computeNextOnlinePhase(room);
+  const text = (state.onlineLiveText || "").trim();
+  state.onlineLiveText = "";
+  try {
+    await onlineRoomAction({
+      action: "next_turn",
+      transcriptEntry: { side: room.currentSide, phaseName, text },
+      nextPhaseIndex: next.ended ? room.phaseIndex : next.nextPhaseIndex,
+      nextSide: next.ended ? room.currentSide : next.nextSide,
+      nextTurnSeconds: next.ended ? room.turnSeconds : next.nextTurnSeconds,
+      ended: !!next.ended,
+    });
+    if (next.ended) toast("Debate complete.", "success");
+  } catch (e) {
+    toast("Couldn't advance the turn: " + (e.message || e), "error");
+  }
+}
+
+function continueOnlineCrossfire() {
+  // Same underlying action as ending a turn — just triggered from the
+  // "both sides" control instead of the single-speaker one, and with
+  // nothing captured locally to relay (crossfire has no assigned mic).
+  endOnlineTurn();
+}
+
+async function scoreOnline(side, type, delta, label) {
+  if (!state.onlineRoom) return;
+  try {
+    await onlineRoomAction({ action: "score", side, delta, label: label || type });
+  } catch (e) {
+    toast("Couldn't score that: " + (e.message || e), "error");
+  }
+}
+
+async function endOnlineDebateNow() {
+  if (!state.onlineRoom) return;
+  stopOnlineMic();
+  try {
+    await onlineRoomAction({ action: "end" });
+    toast("Debate ended.", "warn");
+  } catch (e) {
+    toast("Couldn't end debate: " + (e.message || e), "error");
+  }
+}
+
+function renderOnlineTranscript(room) {
+  if (!room.transcript || !room.transcript.length) return '<div class="fc-empty">No turns yet.</div>';
+  return room.transcript.map(t => {
+    const name = t.side === "a" ? room.hostName : (t.side === "b" ? (room.guestName || "Guest") : "Both sides");
+    return `<div class="transcript-round">
+      <div class="transcript-round-head">${escapeHtml(t.phaseName || "")} · ${escapeHtml(name)}</div>
+      ${t.text ? `<div class="transcript-quote">${escapeHtml(t.text)}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function renderOnlineRoom() {
+  const room = state.onlineRoom;
+  if (!room) return;
+
+  const waitingEl = document.getElementById("online-waiting");
+  const activeEl = document.getElementById("online-active");
+  const endedEl = document.getElementById("online-ended");
+  waitingEl.style.display = "none";
+  activeEl.style.display = "none";
+  endedEl.style.display = "none";
+
+  if (room.status === "waiting") {
+    waitingEl.style.display = "";
+    document.getElementById("online-room-code-display").textContent = room.roomCode;
+    return;
+  }
+
+  if (room.status === "ended") {
+    endedEl.style.display = "";
+    document.getElementById("online-final-score").textContent =
+      `${room.hostName} ${room.scoreA} – ${room.scoreB} ${room.guestName || "Guest"}`;
+    document.getElementById("online-final-transcript").innerHTML = renderOnlineTranscript(room);
+    stopOnlinePolling();
+    stopOnlineMic();
+    return;
+  }
+
+  // status === "active"
+  activeEl.style.display = "";
+  const mode = DEBATE_MODES[room.mode] || DEBATE_MODES.casual;
+  document.getElementById("online-mode-badge").textContent = mode.name;
+  document.getElementById("online-topic-display").textContent = room.topic || "(no topic)";
+  document.getElementById("online-name-a").textContent = room.hostName;
+  document.getElementById("online-name-b").textContent = room.guestName || "Waiting…";
+  document.getElementById("online-sidelabel-a").textContent = mode.sideLabels.a;
+  document.getElementById("online-sidelabel-b").textContent = mode.sideLabels.b;
+  document.getElementById("online-score-a").textContent = room.scoreA;
+  document.getElementById("online-score-b").textContent = room.scoreB;
+
+  const phaseName = currentOnlinePhaseName(room);
+  document.getElementById("online-phase-name").textContent = phaseName;
+  document.getElementById("online-phase-index").textContent = mode.phases
+    ? `Phase ${room.phaseIndex + 1} of ${mode.phases.length}`
+    : `Round ${room.phaseIndex + 1}`;
+
+  const isCrossfire = room.currentSide === "both";
+  const speakerName = isCrossfire ? "Both sides" : (room.currentSide === "a" ? room.hostName : (room.guestName || mode.sideLabels.b));
+  const sideTxt = isCrossfire ? "Both sides — discuss, then continue" : `${speakerName} is speaking`;
+  document.getElementById("online-phase-side").textContent = sideTxt;
+  document.getElementById("online-timer-label").textContent = sideTxt;
+
+  const m = Math.floor(room.turnRemaining / 60).toString().padStart(2, "0");
+  const s = (room.turnRemaining % 60).toString().padStart(2, "0");
+  document.getElementById("online-timer").textContent = `${m}:${s}`;
+  const total = room.turnSeconds || 1;
+  document.getElementById("online-timer-fill").style.width = Math.max(0, Math.min(100, (room.turnRemaining / total) * 100)) + "%";
+
+  const isYourTurn = !!room.yourSide && room.currentSide === room.yourSide;
+  document.getElementById("online-your-controls").style.display = (isYourTurn && !isCrossfire) ? "flex" : "none";
+  document.getElementById("online-crossfire-controls").style.display = isCrossfire ? "flex" : "none";
+  document.getElementById("online-waiting-turn").style.display = (!isYourTurn && !isCrossfire) ? "" : "none";
+
+  document.getElementById("online-btn-start").disabled = room.timerRunning;
+  document.getElementById("online-btn-pause").disabled = !room.timerRunning;
+  document.getElementById("online-btn-start").textContent = room.timerRunning ? "Running…" : "Start turn";
+
+  document.getElementById("online-transcript-list").innerHTML = renderOnlineTranscript(room);
+}
+
+/* Standalone speech capture for online mode — deliberately separate from
+   the local-mode SpeechRecognition setup, which is tightly coupled to
+   local state (auto fact-check queue, live undo tray, etc.) that online
+   mode doesn't use in this first version. */
+function startOnlineMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast("Speech recognition isn't supported here. Try Chrome or Edge.", "error"); return; }
+  stopOnlineMic();
+  const r = new SR();
+  r.lang = "en-US";
+  r.interimResults = true;
+  r.continuous = true;
+  r.onresult = (event) => {
+    let finalChunk = "";
+    let interim = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const res = event.results[i];
+      if (res.isFinal) finalChunk += res[0].transcript + " ";
+      else interim += res[0].transcript;
+    }
+    if (finalChunk) state.onlineLiveText = (state.onlineLiveText + " " + finalChunk).trim();
+    const subs = document.getElementById("online-live-subtitles");
+    if (subs) {
+      const shown = (state.onlineLiveText + " " + interim).trim();
+      subs.textContent = shown || "Listening…";
+      subs.classList.toggle("empty", !shown);
+    }
+  };
+  r.onerror = (e) => {
+    if (e.error === "not-allowed") toast("Microphone access denied.", "error");
+  };
+  r.onend = () => {
+    if (state.onlineRecog === r) { try { r.start(); } catch (_) {} } // browsers sometimes stop after a silence gap
+  };
+  state.onlineRecog = r;
+  try { r.start(); } catch (_) {}
+  document.getElementById("online-mic-dot")?.classList.add("active");
+}
+
+function stopOnlineMic() {
+  if (state.onlineRecog) {
+    const r = state.onlineRecog;
+    state.onlineRecog = null; // clear first so onend doesn't auto-restart
+    try { r.stop(); } catch (_) {}
+  }
+  document.getElementById("online-mic-dot")?.classList.remove("active");
 }
 
 function openPrivacyModal() {
