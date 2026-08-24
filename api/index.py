@@ -19,7 +19,7 @@ suspended free-tier Neon database or a network blip should come back as a
 clean JSON error, not an unhandled crash.
 
 Routes (unchanged from the previous per-file version, same paths, same
-request/response JSON shapes — the client in index.html needed zero changes,
+request/response JSON shapes — the client in app.html needed zero changes,
 plus the new profile route):
   POST /api/groq-chat             - Groq chat-completions proxy
   POST /api/groq-whisper          - Groq Whisper transcription proxy

@@ -10,7 +10,7 @@ Live and uploaded debate scoring with fact-checking and fallacy detection. Power
    ```
 2. Open `config.local.js` and paste your Groq API key into `GROQ_API_KEY`.
    Get a key at <https://console.groq.com/keys>.
-3. Open `index.html` directly in a browser, or run a tiny static server:
+3. Open `app.html` directly in a browser, or run a tiny static server:
    ```bash
    npx serve .
    ```
@@ -54,7 +54,8 @@ Vercel's Hobby tier caps request bodies at 4.5 MB. Upload mode chunks audio into
 
 ## Files
 
-- `index.html` — the entire app (UI, recording, scoring, fact-check, judge).
+- `index.html` — the marketing landing page (waitlist form, product pitch).
+- `app.html` — the entire app (UI, recording, scoring, fact-check, judge).
 - `config.js` — committed defaults (toggles only, no keys).
 - `config.local.example.js` — template for local development.
 - `config.local.js` — your local config, gitignored, holds your Groq key.
