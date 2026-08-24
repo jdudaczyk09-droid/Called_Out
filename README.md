@@ -19,7 +19,7 @@ Live and uploaded debate scoring with fact-checking and fallacy detection. Power
 
 ## Deploy to Vercel
 
-The app ships as static HTML plus a Python serverless backend in `/api/` (Vercel's Python runtime — dependencies in `requirements.txt`) that holds the Groq key server-side, so visitors of your deployment never see it.
+The app ships as static HTML plus a single Flask app (`api/index.py`, Vercel's Python runtime — dependencies in `requirements.txt`) that holds the Groq key server-side, so visitors of your deployment never see it. `vercel.json` rewrites every `/api/*` request to this one function; Flask's own routing handles the rest internally — one file, no cross-file imports for Vercel to bundle correctly.
 
 1. Push the repo to GitHub.
 2. Import the project in the Vercel dashboard.
@@ -59,21 +59,21 @@ Vercel's Hobby tier caps request bodies at 4.5 MB. Upload mode chunks audio into
 - `config.local.example.js` — template for local development.
 - `config.local.js` — your local config, gitignored, holds your Groq key.
 - `.env` — server-side env mirror, gitignored.
-- `api/groq-chat.py` — Vercel serverless proxy for Groq chat completions.
-- `api/groq-whisper.py` — Vercel serverless proxy for Groq Whisper.
-- `api/league-submit.py` — records one finished debate's summary against a league code.
-- `api/league-stats.py` — aggregate stats for a league code (backs the League tab).
-- `api/auth-signup.py` / `api/auth-login.py` / `api/auth-me.py` — account signup, login, and session check (bcrypt + JWT).
-- `api/account-save-debate.py` / `api/account-stats.py` — syncs a signed-in user's debate history and stats.
-- `api/_lib/` — shared Python helpers (underscore-prefixed so Vercel doesn't route it as an endpoint): `util.py` (request/response helpers), `db.py` (Postgres connection), `auth.py` (bcrypt + JWT).
-- `requirements.txt` — Python dependencies for the `/api/` functions (`requests`, `psycopg2-binary`, `bcrypt`, `PyJWT`).
-- `vercel.json` — security headers + cache config.
+- `api/index.py` — the whole backend: one Flask app handling every `/api/*` route (Groq proxies, League Dashboards, accounts). See the module docstring at the top of the file for the full route list.
+- `requirements.txt` (root and `api/`, identical — kept in both in case Vercel's builder only checks one) — Python dependencies (`flask`, `requests`, `psycopg2-binary`, `bcrypt`, `PyJWT`).
+- `vercel.json` — rewrites all `/api/*` traffic to `api/index.py`, plus security headers + cache config.
 
 ## Scripts
 
 ```bash
-npm run dev       # vercel dev (local emulation of /api/* — runs the Python functions too)
+npm run dev       # vercel dev (local emulation of /api/* — runs the Flask app too)
 npm run deploy    # vercel --prod
 ```
 
 The `vercel` CLI itself is a Node tool, but nothing in `/api/` is JavaScript anymore — `vercel dev` just also knows how to run Python functions locally (it reads `requirements.txt` and executes them with Vercel's Python runtime).
+
+You can also run the backend directly for local testing, same as any Flask app:
+```bash
+pip install -r requirements.txt
+python api/index.py    # starts on http://127.0.0.1:5000
+```
