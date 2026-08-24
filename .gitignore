@@ -12,8 +12,14 @@ config.local.js
 .vercel
 .vercel/
 
-# Node
+# Node (Vercel CLI only — the backend itself is Python now)
 node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
 
 # OS / editor
 .DS_Store

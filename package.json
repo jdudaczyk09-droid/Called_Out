@@ -1,12 +1,8 @@
 {
-  "name": "called-out",
+  "name": "verdict-ai",
   "version": "0.1.0",
   "private": true,
-  "description": "Called Out — live & uploaded debate scoring with fact-check + fallacy detection",
-  "type": "module",
-  "engines": {
-    "node": ">=18"
-  },
+  "description": "Verdict AI — live & uploaded debate scoring with fact-check + fallacy detection. Static frontend, Python (Vercel serverless) backend — see requirements.txt.",
   "scripts": {
     "dev": "vercel dev",
     "deploy": "vercel --prod"
