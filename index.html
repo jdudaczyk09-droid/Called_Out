@@ -243,7 +243,7 @@
     font-weight: 500;
   }
 
-  input[type=text], input[type=number], input[type=password], select, textarea {
+  input[type=text], input[type=number], input[type=password], input[type=email], select, textarea {
     width: 100%;
     padding: 9px 12px;
     background: var(--bg);
@@ -253,6 +253,7 @@
     font-size: 14px;
     font-family: inherit;
     transition: border-color 0.15s;
+    color-scheme: dark;
   }
 
   input:focus, select:focus, textarea:focus {
@@ -261,6 +262,18 @@
   }
 
   textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+
+  /* Browsers force a pale autofill background (saved passwords, remembered
+     emails) that ignores normal `background` — this pushes it back to dark
+     via a big inset shadow, the standard workaround. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text);
+    -webkit-box-shadow: 0 0 0 1000px var(--surface-2) inset;
+    box-shadow: 0 0 0 1000px var(--surface-2) inset;
+    transition: background-color 9999s ease-in-out 0s;
+  }
 
   /* Debate mode picker */
   .mode-grid {
@@ -1882,8 +1895,8 @@
     transition: color 0.2s, border-color 0.2s;
   }
   .whisper-pill .wp-dot { display: none; }
-  .whisper-pill.recording { color: var(--green); border-color: rgba(34, 197, 94, 0.4); }
-  .whisper-pill.uploading { color: var(--yellow); border-color: rgba(234, 179, 8, 0.4); }
+  .whisper-pill.recording { color: #86e6ab; border-color: rgba(34, 197, 94, 0.3); background: var(--green-soft); }
+  .whisper-pill.uploading { color: #f3d16b; border-color: rgba(234, 179, 8, 0.3); background: var(--yellow-soft); }
 
   /* ========= Live claim log sidebar ========= */
   .claim-log {
@@ -2159,22 +2172,37 @@
   .afc-toggle-chip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     font-family: var(--font-mono);
     font-size: 9.5px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-faint);
-    padding: 4px 9px;
+    padding: 4px 9px 4px 8px;
     border: 1px solid var(--border-strong);
     border-radius: 2px;
     background: var(--surface-2);
-    transition: color 0.2s, border-color 0.2s;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
   }
   .afc-toggle-chip .afc-dot { display: none; }
-  .afc-toggle-chip.live { color: var(--green); border-color: rgba(34, 197, 94, 0.4); }
-  .afc-toggle-chip.busy { color: var(--yellow); border-color: rgba(234, 179, 8, 0.4); }
+  .afc-toggle-chip::before {
+    content: "▪";
+    font-size: 8px;
+    color: var(--text-faint);
+  }
+  .afc-toggle-chip.live {
+    color: #86e6ab;
+    border-color: rgba(34, 197, 94, 0.3);
+    background: var(--green-soft);
+  }
+  .afc-toggle-chip.live::before { color: var(--green); }
+  .afc-toggle-chip.busy {
+    color: #f3d16b;
+    border-color: rgba(234, 179, 8, 0.3);
+    background: var(--yellow-soft);
+  }
+  .afc-toggle-chip.busy::before { color: var(--yellow); animation: afcPulse 1s infinite; }
   @keyframes afcPulse {
     0%, 100% { opacity: 1; }
     50%      { opacity: 0.4; }
@@ -3111,101 +3139,101 @@
         <div class="eyebrow">How Verdict AI works</div>
         <h1>From "they're speaking" to "point scored" — in under a second.</h1>
         <p class="lead">
-          Verdict AI runs your debate with a live transcript and an AI fact-checker listening
-          to every sentence. The moment someone states a fact, the screen flashes green or red
-          and the points post automatically. Here's what's actually happening, round by round.
+          Say something true and the screen flashes green before you've finished your next
+          breath. Say something false and it flashes red. Nobody's raising a hand to fact-check
+          you — it's already done. Here's the machinery behind that, round by round.
         </p>
 
         <div class="how-section">
           <h3><span class="how-badge">1</span> Setup</h3>
           <p>
-            Pick a format — Casual, Public Forum, Lincoln-Douglas, Policy, Parliamentary, or
-            Mock Trial. The competitive formats auto-configure the real speech order and time
-            limits (Parliamentary, for instance, runs PMC → LOC → MG → MO → LOR → PMR).
-            Casual mode lets you set your own rounds, seconds per turn, and whether sides
-            alternate.
+            Six formats, one screen. Pick Public Forum and the whole speech order snaps into
+            place — constructives, crossfires, summaries, final focus, real time limits, zero
+            guessing. Parliamentary runs the actual PMC → LOC → MG → MO → LOR → PMR sequence.
+            Casual mode throws all of that out — you just set the rounds, the clock, and
+            whether sides trade off.
           </p>
           <p>
-            Set a topic (pick a preset or write your own), name the debaters, choose your
-            spoken language, set point values, and decide whether you want an AI judge to
-            weigh in at the end.
+            Pick a topic — a preset or your own — name the debaters, set your spoken language,
+            decide what points are worth, and choose whether an AI judge weighs in at the end.
           </p>
         </div>
 
         <div class="how-section">
           <h3><span class="how-badge">2</span> Live speech capture</h3>
           <p>
-            During a turn, your browser listens through your microphone and shows a running
-            transcript on screen. Text appears faded while you're still talking and locks in
-            once it's confident. The mic light on the subtitles panel tells you we're
-            actively listening.
+            Hit start and the mic goes live. Words show up almost as fast as you say them —
+            faded at first, while the recognizer's still deciding what it heard, then locked
+            in solid once it's sure. That mic light isn't decoration; it's the only proof
+            anyone's actually listening.
           </p>
           <p>
-            Every sentence you finish gets quietly checked in the background as you keep talking.
+            And while you're mid-sentence on your next point, the one you just finished is
+            already getting checked behind the scenes.
           </p>
         </div>
 
         <div class="how-section">
           <h3><span class="how-badge">3</span> Claim detection &amp; fact-check</h3>
           <p>
-            Each sentence gets read for two things:
+            Every sentence has to clear two questions before anything happens:
           </p>
           <ol>
-            <li><b>Is there an actual factual claim here?</b> (Opinions, questions, filler, and predictions are skipped — you won't get flagged for saying "I think.")</li>
+            <li><b>Is there an actual factual claim here?</b> (Opinions, questions, filler, and predictions get skipped — you won't get dinged for saying "I think.")</li>
             <li><b>Is that claim true or false</b>, based on well-established public knowledge?</li>
           </ol>
           <p>
-            Checks are paced so they don't pile up mid-speech, repeated sentences aren't
-            checked twice, and nothing fires during crossfire (where it's genuinely unclear
-            who's speaking).
+            The checks are paced on purpose — they won't stack up mid-speech, they won't
+            double-check something you already said, and they go quiet during crossfire,
+            because even we can't tell who's talking over whom.
           </p>
         </div>
 
         <div class="how-section">
           <h3><span class="how-badge">4</span> Instant feedback</h3>
-          <p>When a claim comes back checked:</p>
+          <p>The verdict comes back fast, and it only goes three ways:</p>
           <ul>
             <li><span class="color-dot green"></span><b>Verified</b> — screen flashes green, a short high tone plays, and the speaker gets <code>+fact</code>.</li>
             <li><span class="color-dot red"></span><b>False</b> — screen flashes red, a low tone plays, and the speaker loses <code>−wrong</code>.</li>
             <li><span class="color-dot amber"></span><b>Unclear</b> or not really a claim — a banner briefly shows what it found, but no points move.</li>
           </ul>
           <p>
-            A banner near the top shows the claim in plain words, a one-sentence explanation,
-            and who got scored. Every automatic call is tagged <code>· auto</code> in the undo
-            tray, so you can reverse anything that looks wrong with one click.
+            A banner surfaces the claim in plain English, one line of reasoning, and whoever
+            just got scored. Every one of these calls is tagged <code>· auto</code> in the undo
+            tray, in case the machine got it wrong and you need to say so.
           </p>
         </div>
 
         <div class="how-section">
           <h3><span class="how-badge">5</span> Manual scoring &amp; fallacies</h3>
           <p>
-            You're still in charge. Hit <b>+fact</b> / <b>−wrong</b> on either debater panel for
-            anything the auto-checker missed. The <b>−fallacy</b> button opens a picker for 16
-            common logical fallacies (Ad Hominem, Straw Man, Slippery Slope, etc.) — pick one
-            and it docks the penalty and tags the transcript.
+            The AI doesn't get the final word — you do. Missed a claim? Hit <b>+fact</b> or
+            <b>−wrong</b> yourself. Heard a straw man or a slippery slope slide by? The
+            <b>−fallacy</b> button pulls up all 16 — pick the one that fits and it docks the
+            point and tags the transcript right where it happened.
           </p>
           <p>
-            You can also highlight any phrase in the live subtitles for a one-click
-            "Fact-check this" shortcut that runs the same check on demand.
+            Or skip the button entirely — highlight the phrase yourself in the live subtitles
+            and a "Fact-check this" shortcut pops up, running the exact same check on demand.
           </p>
         </div>
 
         <div class="how-section">
           <h3><span class="how-badge">6</span> End of debate</h3>
           <p>
-            When the round wraps up (or you hit "End debate"), you land on Results: final
-            scores, the tally of facts / wrong claims / fallacies per side, a highlight reel
-            of every tagged moment, and the full transcript ready to export as plain text.
+            When the clock runs out — or you end it yourself — everything lands on Results:
+            final scores, the fact / wrong / fallacy tally for each side, a highlight reel of
+            every moment that got flagged, and the full transcript, ready to export.
           </p>
           <p>
-            If you turned on <b>AI Judging</b>, you also get a written verdict — either by
-            points (summarizing the tally) or by substance (reading the transcript and calling
-            who made the stronger case).
+            Turn on <b>AI Judging</b> and you also get an actual verdict — a points-based one
+            that just does the math, or a substance-based one that reads the whole transcript
+            and calls who made the stronger argument.
           </p>
         </div>
 
         <div class="how-section">
-          <h3><span class="how-badge">·</span> The seven formats at a glance</h3>
+          <h3><span class="how-badge">·</span> The six formats at a glance</h3>
           <table class="mode-table">
             <thead>
               <tr><th>Format</th><th>Sides</th><th>Structure</th></tr>
@@ -3224,21 +3252,23 @@
         <div class="how-section">
           <h3><span class="how-badge">·</span> Privacy</h3>
           <p>
-            Nothing is sent to a server we control. Your audio never leaves your browser —
-            only the text of the specific sentence being checked goes out for verification,
-            and nothing is stored anywhere afterward. If fact-checking can't reach its
-            engine for any reason, it just quietly turns itself off and the app keeps
-            working in fully-manual mode — nothing breaks.
+            Your audio never leaves your browser. What gets sent out is the text of the one
+            sentence being checked, nothing more — not a recording, not the round before it,
+            not your name. Nothing is stored anywhere afterward. And if the fact-checker can't
+            reach its engine for any reason, it doesn't throw an error at you — it just goes
+            quiet and hands control back, and the app keeps running in fully-manual mode like
+            nothing happened.
           </p>
         </div>
 
         <div class="how-section">
           <h3><span class="how-badge">·</span> When to overrule the AI</h3>
           <p>
-            No AI is infallible — especially on statistics, very recent events, or claims
-            that hinge on precise wording. It's tuned to only auto-score when it's genuinely
-            confident, but you should still watch the banner and <b>undo</b> any call that
-            looks off. Every automatic event can be reversed from the undo tray in one click.
+            It will get things wrong sometimes — statistics, very recent events, and anything
+            that hinges on exact wording are where it stumbles. It's tuned to stay quiet unless
+            it's genuinely confident, but "genuinely confident" still isn't "certain." Watch the
+            banner. If a call looks off, it probably is — <b>undo</b> is one click away in the
+            tray, every time.
           </p>
         </div>
 
