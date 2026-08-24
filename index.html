@@ -313,40 +313,10 @@ h2 em{color:var(--gray-3)}
 .contact-section h2 em{color:rgba(250,250,248,0.3)}
 .contact-section .body-text{color:rgba(250,250,248,0.5)}
 
-.contact-split{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:80px;margin-top:40px;
-}
-.contact-form{display:flex;flex-direction:column;gap:16px}
-.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.cf-field{display:flex;flex-direction:column;gap:6px}
-.cf-field label{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:rgba(250,250,248,0.4)}
-.cf-field input,.cf-field textarea{
-  font-family:inherit;font-size:14px;
-  padding:12px 16px;
-  background:rgba(250,250,248,0.06);
-  border:1px solid rgba(250,250,248,0.1);
-  border-radius:8px;color:var(--white);
-  outline:none;transition:border-color 0.15s;
-}
-.cf-field input::placeholder,.cf-field textarea::placeholder{color:rgba(250,250,248,0.25)}
-.cf-field input:focus,.cf-field textarea:focus{border-color:rgba(250,250,248,0.3)}
-.cf-field textarea{min-height:120px;resize:vertical}
-.cf-submit{
-  align-self:flex-start;margin-top:8px;
-  background:var(--white);color:var(--black);
-  padding:12px 28px;border:none;border-radius:999px;
-  font-family:inherit;font-size:13px;font-weight:500;
-  cursor:pointer;transition:opacity 0.15s;
-}
-.cf-submit:hover{opacity:0.85}
-
 .contact-meta{display:flex;flex-direction:column;gap:32px;padding-top:8px}
 .contact-meta-item dt{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:rgba(250,250,248,0.3);margin-bottom:6px}
 .contact-meta-item dd{font-size:15px;color:rgba(250,250,248,0.7)}
 .contact-meta-item a:hover{color:var(--white)}
-
-@media(max-width:860px){.contact-split{grid-template-columns:1fr;gap:48px}}
 
 /* FOOTER */
 footer{
@@ -372,8 +342,8 @@ footer{
     <a href="#problem" class="nav-link">Why</a>
     <a href="#how" class="nav-link">How it works</a>
     <a href="#team" class="nav-link">Team</a>
-    <a href="app.html" class="nav-link">Launch app</a>
-    <a href="#contact" class="nav-pill">Join waitlist</a>
+    <a href="#contact" class="nav-link">Contact</a>
+    <a href="app.html" class="nav-pill">Launch app</a>
   </div>
 </nav>
 
@@ -396,7 +366,7 @@ footer{
       </p>
       <div class="hero-actions">
         <a href="app.html" class="btn-white">Launch the app</a>
-        <a href="#contact" class="btn-ghost">Join the waitlist</a>
+        <a href="#contact" class="btn-ghost">Contact us</a>
       </div>
     </div>
   </div>
@@ -561,39 +531,23 @@ footer{
 <div class="section contact-section" id="contact">
   <div class="section-inner">
     <div class="kicker">Get in touch</div>
-    <h2>Join the waitlist.<br>Be first in line.</h2>
-    <p class="body-text">We are sending the beta to people on this list first. Drop your email and we will reach out when it is ready. Press, partnership, and investor inquiries welcome too.</p>
+    <h2>Questions? Feedback?<br>We're an email away.</h2>
+    <p class="body-text">Verdict AI is live — <a href="app.html" style="color:var(--white);text-decoration:underline;">jump into the app</a> anytime. For press, partnerships, or anything else, reach out directly.</p>
 
-    <div class="contact-split">
-      <form class="contact-form" action="https://formspree.io/f/xbdbwlzy" method="POST">
-        <div class="cf-row">
-          <div class="cf-field"><label>Name</label><input type="text" name="name" placeholder="Your name"></div>
-          <div class="cf-field"><label>Email</label><input type="email" name="email" placeholder="you@company.com"></div>
-        </div>
-        <div class="cf-field"><label>Subject</label><input type="text" name="subject" placeholder="What is this about?"></div>
-          <div class="cf-field"><label>Message</label><textarea name="message" placeholder="Tell us a bit..."></textarea></div>
-        <button class="cf-submit" type="submit">Send message</button>
-      </form>
-
-      <dl class="contact-meta">
-        <div class="contact-meta-item">
-          <dt>Jan Dudaczyk</dt>
-          <dd><a href="mailto:jdudaczyk09@gmail.com">jdudaczyk09@gmail.com</a></dd>
-        </div>
-        <div class="contact-meta-item">
-          <dt>Jeffrey Begun</dt>
-          <dd><a href="mailto:jeffbegun08@gmail.com">jeffbegun08@gmail.com</a></dd>
-        </div>
-        <div class="contact-meta-item">
-          <dt>Location</dt>
-          <dd>New York Metropolitan Area</dd>
-        </div>
-        <div class="contact-meta-item">
-          <dt>Status</dt>
-          <dd>Pre-launch &middot; iOS beta coming soon</dd>
-        </div>
-      </dl>
-    </div>
+    <dl class="contact-meta" style="margin-top:40px;max-width:480px;">
+      <div class="contact-meta-item">
+        <dt>Jan Dudaczyk</dt>
+        <dd><a href="mailto:jdudaczyk09@gmail.com">jdudaczyk09@gmail.com</a></dd>
+      </div>
+      <div class="contact-meta-item">
+        <dt>Jeffrey Begun</dt>
+        <dd><a href="mailto:jeffbegun08@gmail.com">jeffbegun08@gmail.com</a></dd>
+      </div>
+      <div class="contact-meta-item">
+        <dt>Location</dt>
+        <dd>New York Metropolitan Area</dd>
+      </div>
+    </dl>
   </div>
 </div>
 
