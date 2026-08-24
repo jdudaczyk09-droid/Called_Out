@@ -2242,37 +2242,34 @@
   .afc-toggle-chip {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     font-family: var(--font-mono);
     font-size: 9.5px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-faint);
-    padding: 4px 9px 4px 8px;
-    border: 1px solid var(--border-strong);
-    border-radius: 2px;
-    background: var(--surface-2);
-    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    padding: 2px 0;
+    transition: color 0.2s;
   }
-  .afc-toggle-chip .afc-dot { display: none; }
-  .afc-toggle-chip::before {
-    content: "▪";
-    font-size: 8px;
-    color: var(--text-faint);
+  .afc-toggle-chip .afc-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-faint);
+    transition: background 0.2s, box-shadow 0.2s;
   }
-  .afc-toggle-chip.live {
-    color: #86e6ab;
-    border-color: rgba(34, 197, 94, 0.3);
-    background: var(--green-soft);
+  .afc-toggle-chip.live { color: var(--text-dim); }
+  .afc-toggle-chip.live .afc-dot {
+    background: var(--green);
+    box-shadow: 0 0 5px rgba(34, 197, 94, 0.65);
   }
-  .afc-toggle-chip.live::before { color: var(--green); }
-  .afc-toggle-chip.busy {
-    color: #f3d16b;
-    border-color: rgba(234, 179, 8, 0.3);
-    background: var(--yellow-soft);
+  .afc-toggle-chip.busy { color: var(--text-dim); }
+  .afc-toggle-chip.busy .afc-dot {
+    background: var(--yellow);
+    animation: afcPulse 1s infinite;
   }
-  .afc-toggle-chip.busy::before { color: var(--yellow); animation: afcPulse 1s infinite; }
   @keyframes afcPulse {
     0%, 100% { opacity: 1; }
     50%      { opacity: 0.4; }
@@ -2283,6 +2280,7 @@
     display: flex;
     gap: 3px;
     align-items: flex-end;
+    justify-content: space-between;
     overflow-x: auto;
     scrollbar-width: none;
     padding-bottom: 2px;
