@@ -19,7 +19,7 @@
     PROXY_MODE: true,
 
     // Model defaults (no keys — keys live in env vars / config.local.js)
-    GROQ_MODEL: "llama-3.3-70b-versatile",
+    GROQ_MODEL: "openai/gpt-oss-120b",
     GROQ_WHISPER_MODEL: "whisper-large-v3-turbo",
 
     // --- Auto fact-check tuning ---

@@ -1,6 +1,6 @@
 # Verdict AI
 
-Live and uploaded debate scoring with fact-checking and fallacy detection. Powered by Groq (Llama 3.3 70B for reasoning, Whisper-large-v3-turbo for transcription).
+Live and uploaded debate scoring with fact-checking and fallacy detection. Powered by Groq (GPT-OSS 120B for reasoning, Whisper-large-v3-turbo for transcription).
 
 ## Quick start (local dev)
 

@@ -6230,11 +6230,8 @@ function copyTranscript() {
 
 const FC_MODELS = {
   groq: [
-    { id: "llama-3.3-70b-versatile",     label: "Llama 3.3 70B Versatile (recommended)" },
-    { id: "llama-3.1-8b-instant",        label: "Llama 3.1 8B Instant (fastest)" },
-    { id: "deepseek-r1-distill-llama-70b", label: "DeepSeek R1 Distill 70B (reasoning)" },
-    { id: "qwen-2.5-72b-instruct",        label: "Qwen 2.5 72B" },
-    { id: "mixtral-8x7b-32768",           label: "Mixtral 8x7B 32k" }
+    { id: "openai/gpt-oss-120b", label: "GPT-OSS 120B (recommended)" },
+    { id: "openai/gpt-oss-20b",  label: "GPT-OSS 20B (fastest)" }
   ]
 };
 
@@ -6253,7 +6250,7 @@ function fcModel() {
   const sel = document.getElementById("fc-model");
   if (sel && sel.value) return sel.value;
   const cfg = window.APP_CONFIG || {};
-  return cfg.GROQ_MODEL || "llama-3.3-70b-versatile";
+  return cfg.GROQ_MODEL || "openai/gpt-oss-120b";
 }
 
 /* Called from the provider <select>; repopulates the model dropdown. */
@@ -6531,7 +6528,7 @@ async function groqClaimCheck(sentence, opts) {
   const key = (opts && opts.providerOverride) ? (cfg.GROQ_API_KEY || "") : fcKey();
   const useProxy = !key && !!cfg.PROXY_MODE;
   if (!key && !useProxy) throw new Error("No Groq key configured (and PROXY_MODE off).");
-  const model = (opts && opts.providerOverride) ? (cfg.GROQ_MODEL || "llama-3.3-70b-versatile") : fcModel();
+  const model = (opts && opts.providerOverride) ? (cfg.GROQ_MODEL || "openai/gpt-oss-120b") : fcModel();
   const url = useProxy ? "/api/groq-chat" : "https://api.groq.com/openai/v1/chat/completions";
   const headers = useProxy
     ? { "Content-Type": "application/json" }
@@ -6610,7 +6607,7 @@ async function groqFallacyCheck(sentence, opts) {
   const key = usingOverride ? (cfg.GROQ_API_KEY || "") : fcKey();
   const useProxy = !key && !!cfg.PROXY_MODE;
   if (!key && !useProxy) throw new Error("No Groq key configured (and PROXY_MODE off).");
-  const model = usingOverride ? (cfg.GROQ_MODEL || "llama-3.3-70b-versatile") : fcModel();
+  const model = usingOverride ? (cfg.GROQ_MODEL || "openai/gpt-oss-120b") : fcModel();
   const url = useProxy ? "/api/groq-chat" : "https://api.groq.com/openai/v1/chat/completions";
   const headers = useProxy
     ? { "Content-Type": "application/json" }
@@ -6811,7 +6808,7 @@ async function groqRespectCheck(sentence, opts) {
   const key = usingOverride ? (cfg.GROQ_API_KEY || "") : fcKey();
   const useProxy = !key && !!cfg.PROXY_MODE;
   if (!key && !useProxy) throw new Error("No Groq key configured (and PROXY_MODE off).");
-  const model = usingOverride ? (cfg.GROQ_MODEL || "llama-3.3-70b-versatile") : fcModel();
+  const model = usingOverride ? (cfg.GROQ_MODEL || "openai/gpt-oss-120b") : fcModel();
   const url = useProxy ? "/api/groq-chat" : "https://api.groq.com/openai/v1/chat/completions";
   const headers = useProxy
     ? { "Content-Type": "application/json" }
@@ -7716,7 +7713,7 @@ Respond in strict JSON with this shape and nothing else:
     return heuristicJudge();
   }
   if (state.aiProvider === "groq") {
-    const model = cfg.GROQ_MODEL || "llama-3.3-70b-versatile";
+    const model = cfg.GROQ_MODEL || "openai/gpt-oss-120b";
     const url = useProxy ? "/api/groq-chat" : "https://api.groq.com/openai/v1/chat/completions";
     const headers = useProxy
       ? { "Content-Type": "application/json" }
