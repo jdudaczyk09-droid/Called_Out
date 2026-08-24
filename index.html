@@ -3151,6 +3151,19 @@
               <div class="winner-banner">Debate complete</div>
               <div class="winner-name" id="online-final-score">—</div>
             </div>
+
+            <div class="card upload-card">
+              <h3>AI Judge</h3>
+              <div class="form-grid two-col">
+                <div class="field" style="grid-column: 1 / -1;">
+                  <label>Judge persona (optional)</label>
+                  <select id="online-judge-persona"></select>
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="runOnlineJudge()">Run AI judge</button>
+              <div id="online-judge-verdicts" style="margin-top:14px;"></div>
+            </div>
+
             <div class="transcript-log">
               <h3>Full transcript</h3>
               <div id="online-final-transcript"></div>
@@ -4209,6 +4222,9 @@ const state = {
   onlinePollTimer: null,
   onlineLiveText: "",
   onlineRecog: null,
+  onlineAfcSeen: new Set(),
+  onlineAfcQueue: Promise.resolve(),
+  onlineAfcLastAt: 0,
 
   // Whisper transcription state (opt-in)
   useWhisper: false,
@@ -4260,7 +4276,7 @@ function init() {
   const privacyDateEl = document.getElementById("privacy-date");
   if (privacyDateEl) privacyDateEl.textContent = "August 23, 2026";
   initCookieBanner();
-  loadAuthSession();
+  loadAuthSession().then(() => { if (typeof tryRestoreOnlineRoom === "function") tryRestoreOnlineRoom(); });
   let savedLang = "en";
   try { savedLang = localStorage.getItem("calledout_ui_lang") || "en"; } catch (e) {}
   const langSel = document.getElementById("ui-lang");
@@ -5589,6 +5605,7 @@ async function hostOnlineRoom() {
     const data = await resp.json();
     if (!resp.ok) throw new Error(data?.error || "Couldn't create room.");
     state.onlineRoom = data.room;
+    saveOnlineRoomCode(state.onlineRoom.roomCode);
     startOnlinePolling();
     renderOnlineScreen();
   } catch (e) {
@@ -5615,6 +5632,7 @@ async function joinOnlineRoom() {
     const data = await resp.json();
     if (!resp.ok) throw new Error(data?.error || "Couldn't join room.");
     state.onlineRoom = data.room;
+    saveOnlineRoomCode(state.onlineRoom.roomCode);
     startOnlinePolling();
     renderOnlineScreen();
   } catch (e) {
@@ -5628,7 +5646,36 @@ function leaveOnlineRoom() {
   stopOnlineMic();
   state.onlineRoom = null;
   state.onlineLiveText = "";
+  clearOnlineRoomCode();
   renderOnlineScreen();
+}
+
+/* Room rejoin after a page refresh — the room code is the only thing kept
+   in localStorage; everything else is re-fetched fresh from the server. */
+function saveOnlineRoomCode(code) {
+  try { localStorage.setItem("verdictai_online_room", code); } catch (_) {}
+}
+function clearOnlineRoomCode() {
+  try { localStorage.removeItem("verdictai_online_room"); } catch (_) {}
+}
+async function tryRestoreOnlineRoom() {
+  if (!state.authToken) return;
+  let code = null;
+  try { code = localStorage.getItem("verdictai_online_room"); } catch (_) {}
+  if (!code) return;
+  try {
+    const resp = await fetch("/api/room-state?code=" + encodeURIComponent(code), {
+      headers: { Authorization: "Bearer " + state.authToken },
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data?.error || "Room not found");
+    if (data.room.status === "ended") { clearOnlineRoomCode(); return; }
+    state.onlineRoom = data.room;
+    startOnlinePolling();
+    if (document.getElementById("screen-online")?.classList.contains("active")) renderOnlineScreen();
+  } catch (e) {
+    clearOnlineRoomCode();
+  }
 }
 
 function startOnlinePolling() {
@@ -5691,12 +5738,190 @@ function computeNextOnlinePhase(room) {
 
 async function startOnlineTurn() {
   if (!state.onlineRoom) return;
+  state.onlineAfcSeen = new Set();
   try {
     await onlineRoomAction({ action: "start_turn" });
     startOnlineMic();
   } catch (e) {
     toast("Couldn't start turn: " + (e.message || e), "error");
   }
+}
+
+/* =========================================================================
+   ONLINE FACT-CHECK / FALLACY / RESPECT — reuses the same generic AI-call
+   functions as local mode (runClaimCheck, runFallacyCheck, runRespectCheck,
+   normalizeClaims, etc. — none of those touch local state beyond the
+   shared per-debate budget counter, safe to share). What's different from
+   local mode is where a confirmed result goes: local mode calls addPoint()
+   to mutate this browser's own state directly; online mode calls
+   scoreOnline() so the score updates in the shared room and both devices
+   see it on their next poll.
+   ========================================================================= */
+function queueOnlineFactCheck(chunk) {
+  const room = state.onlineRoom;
+  if (!room || !room.yourSide || room.currentSide !== room.yourSide) return; // only check your own live turn
+  if (!chunk) return;
+  const cfg = window.APP_CONFIG || {};
+  if (!fcKey() && !cfg.PROXY_MODE) return;
+
+  const minChars = cfg.AUTO_FACTCHECK_MIN_CHARS ?? 8;
+  const minWords = cfg.AUTO_FACTCHECK_MIN_WORDS ?? 2;
+  const cooldown = cfg.AUTO_FACTCHECK_COOLDOWN_MS ?? 1200;
+  const side = room.yourSide;
+  const topic = room.topic || "";
+
+  splitIntoClaims(chunk).forEach(sentence => {
+    if (sentence.length < minChars) return;
+    const wordCount = sentence.trim().split(/\s+/).filter(Boolean).length;
+    if (wordCount < minWords) return;
+    const hash = sentence.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 160);
+    if (state.onlineAfcSeen.has(hash)) return;
+    state.onlineAfcSeen.add(hash);
+
+    state.onlineAfcQueue = state.onlineAfcQueue.then(async () => {
+      const now = Date.now();
+      const wait = Math.max(0, state.onlineAfcLastAt + cooldown - now);
+      if (wait) await new Promise(r => setTimeout(r, wait));
+      await runOneOnlineFactCheck(sentence, side, { topic });
+      state.onlineAfcLastAt = Date.now();
+    });
+
+    if (cfg.AUTO_FALLACY_DETECTION) {
+      runFallacyCheck(sentence, { topic }).then(r => {
+        if (!state.onlineRoom || state.onlineRoom.currentSide !== side) return; // turn already moved on
+        normalizeFallacies(r).forEach(f => {
+          if (f.confidence < (cfg.AUTO_FALLACY_MIN_CONF ?? 0.65)) return;
+          scoreOnline(side, "fallacy", -2, "fallacy: " + f.fallacy);
+          toast(`${f.fallacy} — ${f.explanation}`, "warn");
+        });
+      });
+    }
+    if (state.respectFilter) {
+      runRespectCheck(sentence, { topic }).then(r => {
+        const flag = normalizeRespectFlag(r);
+        if (!flag) return;
+        const suffix = flag.rephrase ? ` Try: "${flag.rephrase}"` : "";
+        toast(`${respectCategoryLabel(flag.category)} — this phrasing could read badly.${suffix}`, "warn");
+      });
+    }
+  });
+}
+
+async function runOneOnlineFactCheck(sentence, side, opts) {
+  try {
+    const raw = await runClaimCheck(sentence, opts);
+    const claims = normalizeClaims(raw);
+    const cfg = window.APP_CONFIG || {};
+    const minConf = cfg.AUTO_FACTCHECK_CONFIDENCE ?? 0.7;
+    if (!state.onlineRoom || state.onlineRoom.currentSide !== side) return; // turn already moved on — stale result
+    claims.slice(0, 3).forEach(c => {
+      if (c.confidence < minConf) return;
+      if (c.verdict === "true") {
+        flashScreen("green");
+        beepTone(880);
+        scoreOnline(side, "fact", 1, "fact");
+      } else if (c.verdict === "false") {
+        flashScreen("red");
+        beepTone(220);
+        scoreOnline(side, "wrong", -1, "wrong");
+      }
+    });
+  } catch (e) {
+    console.warn("Online fact-check failed:", e.message || e);
+  }
+}
+
+/* =========================================================================
+   ONLINE AI JUDGE — same JUDGE_PERSONAS and Groq-calling pattern as local
+   mode's runSubstanceJudge(), rebuilt against the room's data instead of
+   local `state` (there's no local transcript/nameA/nameB for an online
+   round — that's the whole point of syncing everything through the room).
+   ========================================================================= */
+function populateOnlineJudgePersonas(room) {
+  const sel = document.getElementById("online-judge-persona");
+  if (!sel) return;
+  const applies = room.mode === "mockTrial" ? "mockTrial" : "debate";
+  sel.innerHTML = '<option value="none">None (default AI judge)</option>' +
+    Object.entries(JUDGE_PERSONAS)
+      .filter(([_, p]) => p.appliesTo === applies)
+      .map(([key, p]) => `<option value="${key}">${escapeHtml(p.name)}</option>`).join("");
+}
+
+async function runOnlineJudge() {
+  const room = state.onlineRoom;
+  const container = document.getElementById("online-judge-verdicts");
+  if (!room || !container) return;
+  const persona = JUDGE_PERSONAS[document.getElementById("online-judge-persona")?.value];
+  container.innerHTML = `<div class="verdict-card"><div class="verdict-loading"><div class="spinner"></div>Reading the round…</div></div>`;
+  try {
+    const transcriptText = (room.transcript || []).map(t => {
+      const name = t.side === "a" ? room.hostName : (t.side === "b" ? (room.guestName || "Guest") : "Both sides");
+      return `### ${t.phaseName || ""} — ${name}\n${t.text || "(silent)"}`;
+    }).join("\n\n");
+    const verdict = await runOnlineJudgeCall(transcriptText, room, persona);
+    container.innerHTML = "";
+    container.appendChild(renderVerdictCard("substance", verdict.winner, verdict.text, persona?.name));
+  } catch (e) {
+    container.innerHTML = `<div class="verdict-card"><div class="verdict-text">Judge failed: ${escapeHtml(e.message || String(e))}</div></div>`;
+  }
+}
+
+async function runOnlineJudgeCall(transcriptText, room, persona) {
+  const cfg = window.APP_CONFIG || {};
+  const guestName = room.guestName || "Guest";
+  const userPrompt =
+`You are an impartial debate judge. Read the transcripts below and decide who made the stronger case on the merits of the actual arguments. Evaluate clarity, evidence, engagement with the opposing case, and logical structure.
+${persona ? `\nJudging paradigm — read this carefully and judge accordingly:\n${persona.instructions}\n` : ""}
+Topic: ${room.topic || "(no topic given)"}
+${room.hostName}: side "a"
+${guestName}: side "b"
+
+Transcripts:
+${transcriptText || "(no transcripts were recorded)"}
+
+Respond in strict JSON with this shape and nothing else:
+{"winner": "${room.hostName}" | "${guestName}" | "Tie", "rationale": "3-5 sentences of reasoning"}`;
+
+  const key = fcKey();
+  const useProxy = !key && !!cfg.PROXY_MODE;
+  if (!key && !useProxy) return heuristicOnlineJudge(room);
+
+  const model = fcModel();
+  const url = useProxy ? "/api/groq-chat" : "https://api.groq.com/openai/v1/chat/completions";
+  const headers = useProxy
+    ? { "Content-Type": "application/json" }
+    : { "Authorization": "Bearer " + key, "Content-Type": "application/json" };
+  const resp = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model,
+      temperature: 0.2,
+      max_tokens: 1200,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: "You are an impartial debate judge. Respond with JSON only." },
+        { role: "user", content: userPrompt }
+      ]
+    })
+  });
+  if (!resp.ok) throw new Error("Groq " + resp.status + ": " + (await resp.text()).slice(0, 200));
+  const data = await resp.json();
+  const raw = data?.choices?.[0]?.message?.content || "";
+  return parseJudgeJSON(raw);
+}
+
+function heuristicOnlineJudge(room) {
+  const words = side => (room.transcript || [])
+    .filter(t => t.side === side)
+    .reduce((n, t) => n + (t.text || "").split(/\s+/).filter(Boolean).length, 0);
+  const wordsA = words("a"), wordsB = words("b");
+  const guestName = room.guestName || "Guest";
+  const winner = wordsA === wordsB ? "Tie" : (wordsA > wordsB ? room.hostName : guestName);
+  return {
+    winner,
+    text: "Built-in heuristic (no AI key configured): based on speaking volume alone. Configure a Groq key for a real content-aware verdict.",
+  };
 }
 
 async function pauseOnlineTurn() {
@@ -5792,8 +6017,10 @@ function renderOnlineRoom() {
     document.getElementById("online-final-score").textContent =
       `${room.hostName} ${room.scoreA} – ${room.scoreB} ${room.guestName || "Guest"}`;
     document.getElementById("online-final-transcript").innerHTML = renderOnlineTranscript(room);
+    populateOnlineJudgePersonas(room);
     stopOnlinePolling();
     stopOnlineMic();
+    clearOnlineRoomCode();
     return;
   }
 
@@ -5859,7 +6086,10 @@ function startOnlineMic() {
       if (res.isFinal) finalChunk += res[0].transcript + " ";
       else interim += res[0].transcript;
     }
-    if (finalChunk) state.onlineLiveText = (state.onlineLiveText + " " + finalChunk).trim();
+    if (finalChunk) {
+      state.onlineLiveText = (state.onlineLiveText + " " + finalChunk).trim();
+      queueOnlineFactCheck(finalChunk.trim());
+    }
     const subs = document.getElementById("online-live-subtitles");
     if (subs) {
       const shown = (state.onlineLiveText + " " + interim).trim();
