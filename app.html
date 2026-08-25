@@ -11,18 +11,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0c0a0a;
-    --surface: #161211;
-    --surface-2: #1c1716;
-    --surface-3: #231c1a;
-    --border: rgba(240, 225, 210, 0.09);
-    --border-strong: rgba(240, 225, 210, 0.2);
-    --text: #ede6df;
-    --text-dim: #a89f97;
+    --bg: #100b0d;
+    --surface: #1a1315;
+    --surface-2: #22191b;
+    --surface-3: #2b1f21;
+    --border: rgba(240, 225, 210, 0.1);
+    --border-strong: rgba(240, 225, 210, 0.22);
+    --text: #f5ede4;
+    --text-dim: #ac9f9a;
     --text-faint: #6b615a;
-    --accent: #e11d48;
-    --accent-hover: #be123c;
-    --accent-soft: rgba(225, 29, 72, 0.12);
+    --accent: #ea2158;
+    --accent-hover: #c81348;
+    --accent-soft: rgba(234, 33, 88, 0.14);
+    --accent-2: #f0b429;
+    --accent-2-hover: #d99a12;
+    --accent-2-soft: rgba(240, 180, 41, 0.14);
     --green: #22c55e;
     --green-soft: rgba(34, 197, 94, 0.12);
     --red: #ef4444;
@@ -52,10 +55,11 @@
 
   body {
     background-image:
-      radial-gradient(rgba(240, 225, 210, 0.035) 1px, transparent 1px),
-      linear-gradient(180deg, rgba(225, 29, 72, 0.05), transparent 340px);
-    background-size: 3px 3px, 100% 100%;
-    background-attachment: fixed, fixed;
+      radial-gradient(rgba(240, 225, 210, 0.04) 1px, transparent 1px),
+      radial-gradient(ellipse 900px 500px at 8% -5%, rgba(234, 33, 88, 0.16), transparent 60%),
+      radial-gradient(ellipse 700px 420px at 100% 0%, rgba(240, 180, 41, 0.1), transparent 65%);
+    background-size: 3px 3px, 100% 100%, 100% 100%;
+    background-attachment: fixed, fixed, fixed;
   }
 
   h1, h2, .font-display { font-family: var(--font-display); }
@@ -102,6 +106,7 @@
     position: relative;
     border: 2px solid var(--accent);
     border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--accent-2-soft);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -589,17 +594,19 @@
   }
 
   .btn-primary {
-    background: var(--accent);
+    background: linear-gradient(115deg, var(--accent) 45%, var(--accent-hover) 100%);
     border-color: var(--accent);
     color: #fff;
     padding: 11px 24px;
     font-size: 13px;
     font-weight: 700;
+    box-shadow: 0 0 0 1px var(--accent-2-soft), 0 6px 20px -8px var(--accent-soft);
   }
 
   .btn-primary:hover {
-    background: var(--accent-hover);
+    background: linear-gradient(115deg, var(--accent-hover) 45%, var(--accent) 100%);
     border-color: var(--accent-hover);
+    box-shadow: 0 0 0 1px var(--accent-2), 0 8px 24px -6px var(--accent-soft);
   }
 
   .btn-ghost { background: transparent; }
@@ -1370,17 +1377,17 @@
   .winner-banner {
     display: inline-block;
     padding: 4px 12px;
-    background: var(--accent);
+    background: var(--accent-2);
     border-radius: 2px;
     border: 2px solid var(--text);
-    outline: 1px solid var(--accent);
+    outline: 1px solid var(--accent-2);
     outline-offset: 2px;
     font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #fff;
+    color: #1a1305;
     margin-bottom: 16px;
     transform: rotate(-2deg);
   }
@@ -2159,7 +2166,11 @@
   #header-meta {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 20px;
+  }
+  #header-meta > * + * {
+    padding-left: 20px;
+    border-left: 1px solid var(--border);
   }
 
   .account-area {
@@ -2172,7 +2183,7 @@
   .account-avatar {
     width: 22px;
     height: 22px;
-    border-radius: 50%;
+    border-radius: 7px 7px 7px 2px;
     object-fit: cover;
     border: 1px solid var(--border-strong);
     cursor: pointer;
@@ -2199,7 +2210,7 @@
   .profile-avatar-preview {
     width: 64px;
     height: 64px;
-    border-radius: 50%;
+    border-radius: 16px 16px 16px 3px;
     object-fit: cover;
     border: 1px solid var(--border-strong);
     background: var(--surface-2);
@@ -2613,7 +2624,7 @@
           <h3 data-i18n="setup.mode.title">Debate Mode</h3>
           <div class="mode-grid" id="mode-grid"></div>
           <div id="mode-preview-wrap" style="display:none;">
-            <div style="font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.14em; font-weight:600; margin-top:16px; margin-bottom:8px;">Format</div>
+            <div data-i18n="setup.mode.format" style="font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.14em; font-weight:600; margin-top:16px; margin-bottom:8px;">Format</div>
             <div class="mode-preview" id="mode-preview"></div>
           </div>
         </div>
@@ -2622,7 +2633,7 @@
           <div class="toggle-row">
             <div class="t-info">
               <div class="t-name" data-i18n="setup.practice.name">Practice Mode</div>
-              <div class="t-desc">Solo practice against the clock — no opponent needed. Get a full AI judge feedback report after, then rerun the same speech to see if your score improves. Works with Casual mode (switches you there automatically).</div>
+              <div class="t-desc" data-i18n="setup.practice.desc">Solo practice against the clock — no opponent needed. Get a full AI judge feedback report after, then rerun the same speech to see if your score improves. Works with Casual mode (switches you there automatically).</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="practice-mode" onchange="onPracticeModeToggle()" />
@@ -2636,15 +2647,15 @@
           <div class="topic-categories" id="topic-categories"></div>
           <div class="topic-list" id="topic-list"></div>
           <div class="field" style="margin-top: 14px;">
-            <label>Or write a custom topic / resolution</label>
-            <textarea id="custom-topic" placeholder="e.g. Resolved: The United States federal government should significantly reform its immigration policy."></textarea>
+            <label data-i18n="setup.topic.customlabel">Or write a custom topic / resolution</label>
+            <textarea id="custom-topic" data-i18n-ph="setup.topic.customph" placeholder="e.g. Resolved: The United States federal government should significantly reform its immigration policy."></textarea>
           </div>
         </div>
 
         <div class="card" id="casual-rounds-card">
           <h3 data-i18n="setup.rounds.title">Rounds &amp; Timer</h3>
           <div class="field">
-            <label>Number of rounds</label>
+            <label data-i18n="setup.rounds.numrounds">Number of rounds</label>
             <div class="counter">
               <button onclick="adjust('round-count', -1)">−</button>
               <input type="number" id="round-count" value="3" min="1" max="20" />
@@ -2652,7 +2663,7 @@
             </div>
           </div>
           <div class="field">
-            <label>Seconds per turn</label>
+            <label data-i18n="setup.rounds.seconds">Seconds per turn</label>
             <div class="counter">
               <button onclick="adjust('turn-seconds', -15)">−</button>
               <input type="number" id="turn-seconds" value="60" min="15" max="600" step="15" />
@@ -2660,10 +2671,10 @@
             </div>
           </div>
           <div class="field">
-            <label>Format</label>
+            <label data-i18n="setup.rounds.format">Format</label>
             <select id="format">
-              <option value="alternate">Alternate (A → B → A → B)</option>
-              <option value="full-round">Full round (A, then B)</option>
+              <option value="alternate" data-i18n="setup.rounds.formatalt">Alternate (A → B → A → B)</option>
+              <option value="full-round" data-i18n="setup.rounds.formatfull">Full round (A, then B)</option>
             </select>
           </div>
         </div>
@@ -2672,30 +2683,30 @@
           <h3 data-i18n="setup.debaters.title">Debaters</h3>
           <div class="debaters">
             <div class="debater-field" data-side="A" id="side-a-wrap">
-              <input type="text" id="name-a" placeholder="Debater A" value="Debater A" />
+              <input type="text" id="name-a" data-i18n-ph="setup.debaters.phA" placeholder="Debater A" value="Debater A" />
             </div>
             <div class="debater-field" data-side="B" id="side-b-wrap">
-              <input type="text" id="name-b" placeholder="Debater B" value="Debater B" />
+              <input type="text" id="name-b" data-i18n-ph="setup.debaters.phB" placeholder="Debater B" value="Debater B" />
             </div>
           </div>
           <div class="field" style="margin-top: 14px;">
-            <label>League code (optional)</label>
+            <label data-i18n="setup.league.label">League code (optional)</label>
             <input type="text" id="league-code" placeholder="e.g. NYCUDL-2026" maxlength="40" />
-            <div class="note">If your coach gave you a code, results get added to your league's dashboard. This isn't a password — anyone with the code can view or submit to it.</div>
+            <div class="note" data-i18n="setup.league.note">If your coach gave you a code, results get added to your league's dashboard. This isn't a password — anyone with the code can view or submit to it.</div>
           </div>
           <div class="field" style="margin-top: 14px;">
-            <label>Language (speech recognition)</label>
+            <label data-i18n="setup.lang.label">Language (speech recognition)</label>
             <select id="lang">
-              <option value="en-US">English (US)</option>
-              <option value="en-GB">English (UK)</option>
-              <option value="es-ES">Spanish</option>
-              <option value="fr-FR">French</option>
-              <option value="de-DE">German</option>
-              <option value="it-IT">Italian</option>
-              <option value="pt-BR">Portuguese (BR)</option>
-              <option value="pl-PL">Polish</option>
-              <option value="ja-JP">Japanese</option>
-              <option value="zh-CN">Chinese (Mandarin)</option>
+              <option value="en-US" data-i18n="setup.lang.enus">English (US)</option>
+              <option value="en-GB" data-i18n="setup.lang.engb">English (UK)</option>
+              <option value="es-ES" data-i18n="setup.lang.es">Spanish</option>
+              <option value="fr-FR" data-i18n="setup.lang.fr">French</option>
+              <option value="de-DE" data-i18n="setup.lang.de">German</option>
+              <option value="it-IT" data-i18n="setup.lang.it">Italian</option>
+              <option value="pt-BR" data-i18n="setup.lang.pt">Portuguese (BR)</option>
+              <option value="pl-PL" data-i18n="setup.lang.pl">Polish</option>
+              <option value="ja-JP" data-i18n="setup.lang.ja">Japanese</option>
+              <option value="zh-CN" data-i18n="setup.lang.zh">Chinese (Mandarin)</option>
             </select>
           </div>
         </div>
@@ -2704,8 +2715,8 @@
           <h3 data-i18n="setup.points.title">Point System</h3>
           <div class="toggle-row">
             <div class="t-info">
-              <div class="t-name">Enable point scoring</div>
-              <div class="t-desc">Tracks verified facts, false claims, and logical fallacies. Off for pure discussion mode.</div>
+              <div class="t-name" data-i18n="setup.points.enable">Enable point scoring</div>
+              <div class="t-desc" data-i18n="setup.points.enabledesc">Tracks verified facts, false claims, and logical fallacies. Off for pure discussion mode.</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="points-on" checked onchange="updatePointsVisibility()" />
@@ -2714,7 +2725,7 @@
           </div>
           <div id="points-config">
             <div class="field" style="margin-top:14px;">
-              <label>Points for a verified fact (+)</label>
+              <label data-i18n="setup.points.factlabel">Points for a verified fact (+)</label>
               <div class="counter">
                 <button onclick="adjust('pts-fact', -1)">−</button>
                 <input type="number" id="pts-fact" value="1" min="1" max="20" />
@@ -2722,7 +2733,7 @@
               </div>
             </div>
             <div class="field">
-              <label>Penalty for an incorrect fact (−)</label>
+              <label data-i18n="setup.points.wronglabel">Penalty for an incorrect fact (−)</label>
               <div class="counter">
                 <button onclick="adjust('pts-wrong', -1)">−</button>
                 <input type="number" id="pts-wrong" value="1" min="1" max="20" />
@@ -2730,7 +2741,7 @@
               </div>
             </div>
             <div class="field">
-              <label>Penalty for a logical fallacy (−)</label>
+              <label data-i18n="setup.points.fallacylabel">Penalty for a logical fallacy (−)</label>
               <div class="counter">
                 <button onclick="adjust('pts-fallacy', -1)">−</button>
                 <input type="number" id="pts-fallacy" value="2" min="1" max="20" />
@@ -2744,8 +2755,8 @@
           <h3 data-i18n="setup.aijudging.title">AI Judging &amp; Auto Fact-Check</h3>
           <div class="toggle-row">
             <div class="t-info">
-              <div class="t-name">Auto fact-check</div>
-              <div class="t-desc">Listen to each speaker in real time. The moment a factual claim comes out of someone's mouth, the screen flashes green (+fact) if it checks out or red (−wrong) if it doesn't.</div>
+              <div class="t-name" data-i18n="setup.ai.autofc">Auto fact-check</div>
+              <div class="t-desc" data-i18n="setup.ai.autofcdesc">Listen to each speaker in real time. The moment a factual claim comes out of someone's mouth, the screen flashes green (+fact) if it checks out or red (−wrong) if it doesn't.</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="auto-fc" checked />
@@ -2753,23 +2764,23 @@
             </label>
           </div>
           <div class="field" style="margin-top:8px;">
-            <label>Fact-check engine</label>
+            <label data-i18n="setup.ai.fcengine">Fact-check engine</label>
             <select id="fc-provider" onchange="onFcProviderChange()">
-              <option value="groq" selected>Standard (fast)</option>
+              <option value="groq" selected data-i18n="setup.ai.fcstandard">Standard (fast)</option>
             </select>
           </div>
           <div class="field" style="margin-top:8px;">
-            <label>Model</label>
+            <label data-i18n="setup.ai.model">Model</label>
             <select id="fc-model"></select>
           </div>
           <div style="display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap;">
-            <button class="btn" type="button" onclick="testFcConnection()">Test connection</button>
+            <button class="btn" type="button" onclick="testFcConnection()" data-i18n="setup.ai.testconn">Test connection</button>
             <span id="fc-test-result" style="font-size:12px; color:var(--text-dim);"></span>
           </div>
           <div class="toggle-row">
             <div class="t-info">
-              <div class="t-name">High-accuracy transcription</div>
-              <div class="t-desc">A sharper listening mode for accents, technical terms, and noisy rooms — captures audio in short bursts instead of relying on your browser's built-in speech recognition.</div>
+              <div class="t-name" data-i18n="setup.ai.whisper">High-accuracy transcription</div>
+              <div class="t-desc" data-i18n="setup.ai.whisperdesc">A sharper listening mode for accents, technical terms, and noisy rooms — captures audio in short bursts instead of relying on your browser's built-in speech recognition.</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="use-whisper" onchange="onWhisperToggle()" />
@@ -2778,8 +2789,8 @@
           </div>
           <div class="toggle-row">
             <div class="t-info">
-              <div class="t-name">Auto fallacy detection</div>
-              <div class="t-desc">A second AI pass watches for classical logical fallacies (ad hominem, straw man, etc.) and surfaces suggestions in a tray. Click "Confirm" to apply the penalty.</div>
+              <div class="t-name" data-i18n="setup.ai.autofallacy">Auto fallacy detection</div>
+              <div class="t-desc" data-i18n="setup.ai.autofallacydesc">A second AI pass watches for classical logical fallacies (ad hominem, straw man, etc.) and surfaces suggestions in a tray. Click "Confirm" to apply the penalty.</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="auto-fallacy" />
@@ -2788,8 +2799,8 @@
           </div>
           <div class="toggle-row">
             <div class="t-info">
-              <div class="t-name">Respect filter</div>
-              <div class="t-desc">A third AI pass watches for slurs, discriminatory language, or personal attacks — never for legitimate discussion of sensitive topics. In Practice Mode it privately coaches you on rephrasing; in a live round it discreetly alerts the moderator panel (bottom-right) instead of interrupting or auto-penalizing.</div>
+              <div class="t-name" data-i18n="setup.ai.respect">Respect filter</div>
+              <div class="t-desc" data-i18n="setup.ai.respectdesc">A third AI pass watches for slurs, discriminatory language, or personal attacks — never for legitimate discussion of sensitive topics. In Practice Mode it privately coaches you on rephrasing; in a live round it discreetly alerts the moderator panel (bottom-right) instead of interrupting or auto-penalizing.</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="respect-filter" checked />
@@ -2798,8 +2809,8 @@
           </div>
           <div class="toggle-row">
             <div class="t-info">
-              <div class="t-name">Verdict by points</div>
-              <div class="t-desc">At the end, announce the winner based on total points, with commentary on the tally.</div>
+              <div class="t-name" data-i18n="setup.ai.verdictpoints">Verdict by points</div>
+              <div class="t-desc" data-i18n="setup.ai.verdictpointsdesc">At the end, announce the winner based on total points, with commentary on the tally.</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="ai-points" />
@@ -2808,8 +2819,8 @@
           </div>
           <div class="toggle-row">
             <div class="t-info">
-              <div class="t-name">Verdict by substance</div>
-              <div class="t-desc">Analyze the actual arguments in the transcripts and decide who made the stronger case.</div>
+              <div class="t-name" data-i18n="setup.ai.verdictsubstance">Verdict by substance</div>
+              <div class="t-desc" data-i18n="setup.ai.verdictsubstancedesc">Analyze the actual arguments in the transcripts and decide who made the stronger case.</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="ai-substance" onchange="toggleAIConfig()" />
@@ -2817,24 +2828,24 @@
             </label>
           </div>
           <div class="field" style="margin-top:8px;">
-            <label>Judge persona (Judge Simulator)</label>
+            <label data-i18n="setup.ai.judgepersona">Judge persona (Judge Simulator)</label>
             <select id="judge-persona"></select>
-            <div class="note">Pick who's judging before the round — a lay judge, flow judge, tech judge, and more each score differently. After the round, use "Try another judge persona" on Results to see how the decision changes.</div>
+            <div class="note" data-i18n="setup.ai.judgepersonanote">Pick who's judging before the round — a lay judge, flow judge, tech judge, and more each score differently. After the round, use "Try another judge persona" on Results to see how the decision changes.</div>
           </div>
           <div class="ai-config" id="ai-config">
             <div class="field">
-              <label>AI judge engine</label>
+              <label data-i18n="setup.ai.engine">AI judge engine</label>
               <select id="ai-provider">
-                <option value="groq" selected>Standard (recommended)</option>
-                <option value="anthropic">Claude</option>
-                <option value="openai">GPT</option>
-                <option value="heuristic">None — basic scoring only</option>
+                <option value="groq" selected data-i18n="setup.ai.enginestandard">Standard (recommended)</option>
+                <option value="anthropic" data-i18n="setup.ai.engineclaude">Claude</option>
+                <option value="openai" data-i18n="setup.ai.enginegpt">GPT</option>
+                <option value="heuristic" data-i18n="setup.ai.enginenone">None — basic scoring only</option>
               </select>
             </div>
             <div class="field">
-              <label>API key (leave blank to use the default)</label>
-              <input type="password" id="ai-key" placeholder="Leave blank unless you're running your own key" />
-              <div class="note">Most setups never need this — the app already comes wired up. Only fill this in if you're self-hosting with your own key.</div>
+              <label data-i18n="setup.ai.apikey">API key (leave blank to use the default)</label>
+              <input type="password" id="ai-key" data-i18n-ph="setup.ai.apikeyph" placeholder="Leave blank unless you're running your own key" />
+              <div class="note" data-i18n="setup.ai.apikeynote">Most setups never need this — the app already comes wired up. Only fill this in if you're self-hosting with your own key.</div>
             </div>
           </div>
         </div>
@@ -2875,18 +2886,18 @@
           <div class="timer" id="timer">00:60</div>
           <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
           <div class="controls">
-            <button class="btn" id="btn-start" onclick="toggleTurn()">Start turn</button>
-            <button class="btn" id="btn-pause" onclick="pauseTimer()" disabled>Pause</button>
-            <button class="btn" onclick="nextTurn(true)">Skip →</button>
-            <button class="btn btn-danger" onclick="endDebate()">End debate</button>
+            <button class="btn" id="btn-start" onclick="toggleTurn()" data-i18n="debate.startturn">Start turn</button>
+            <button class="btn" id="btn-pause" onclick="pauseTimer()" disabled data-i18n="debate.pause">Pause</button>
+            <button class="btn" onclick="nextTurn(true)" data-i18n="debate.skip">Skip →</button>
+            <button class="btn btn-danger" onclick="endDebate()" data-i18n="debate.end">End debate</button>
           </div>
         </div>
       </div>
 
       <div class="undo-tray hidden" id="undo-tray">
-        <div class="undo-label">Recent · click to undo</div>
+        <div class="undo-label" data-i18n="debate.undolabel">Recent · click to undo</div>
         <div class="undo-list" id="undo-list"></div>
-        <button class="btn btn-sm" onclick="undoAll()">Clear all</button>
+        <button class="btn btn-sm" onclick="undoAll()" data-i18n="debate.clearall">Clear all</button>
       </div>
 
       <div class="debate-layout" id="debate-layout">
@@ -2901,21 +2912,21 @@
           <div class="score-controls">
             <button class="score-btn plus" onclick="addPoint('a','fact')">
               <span class="val">+fact</span>
-              <span class="lbl">verified</span>
+              <span class="lbl" data-i18n="debate.verified">verified</span>
             </button>
             <button class="score-btn minus" onclick="addPoint('a','wrong')">
               <span class="val">−wrong</span>
-              <span class="lbl">false claim</span>
+              <span class="lbl" data-i18n="debate.falseclaim">false claim</span>
             </button>
             <button class="score-btn fallacy" onclick="openFallacyPicker('a')">
               <span class="val">−fallacy</span>
-              <span class="lbl">bad logic</span>
+              <span class="lbl" data-i18n="debate.badlogic">bad logic</span>
             </button>
           </div>
           <div class="panel-stats">
-            <div><span class="s-val" id="stat-a-fact">0</span>facts</div>
-            <div><span class="s-val" id="stat-a-wrong">0</span>wrong</div>
-            <div><span class="s-val" id="stat-a-fallacy">0</span>fallacies</div>
+            <div><span class="s-val" id="stat-a-fact">0</span><span data-i18n="debate.facts">facts</span></div>
+            <div><span class="s-val" id="stat-a-wrong">0</span><span data-i18n="debate.wrong">wrong</span></div>
+            <div><span class="s-val" id="stat-a-fallacy">0</span><span data-i18n="debate.fallacies">fallacies</span></div>
           </div>
         </div>
 
@@ -2930,21 +2941,21 @@
           <div class="score-controls">
             <button class="score-btn plus" onclick="addPoint('b','fact')">
               <span class="val">+fact</span>
-              <span class="lbl">verified</span>
+              <span class="lbl" data-i18n="debate.verified">verified</span>
             </button>
             <button class="score-btn minus" onclick="addPoint('b','wrong')">
               <span class="val">−wrong</span>
-              <span class="lbl">false claim</span>
+              <span class="lbl" data-i18n="debate.falseclaim">false claim</span>
             </button>
             <button class="score-btn fallacy" onclick="openFallacyPicker('b')">
               <span class="val">−fallacy</span>
-              <span class="lbl">bad logic</span>
+              <span class="lbl" data-i18n="debate.badlogic">bad logic</span>
             </button>
           </div>
           <div class="panel-stats">
-            <div><span class="s-val" id="stat-b-fact">0</span>facts</div>
-            <div><span class="s-val" id="stat-b-wrong">0</span>wrong</div>
-            <div><span class="s-val" id="stat-b-fallacy">0</span>fallacies</div>
+            <div><span class="s-val" id="stat-b-fact">0</span><span data-i18n="debate.facts">facts</span></div>
+            <div><span class="s-val" id="stat-b-wrong">0</span><span data-i18n="debate.wrong">wrong</span></div>
+            <div><span class="s-val" id="stat-b-fallacy">0</span><span data-i18n="debate.fallacies">fallacies</span></div>
           </div>
         </div>
       </div>
@@ -2953,33 +2964,34 @@
         <div class="subtitles-head">
           <div class="sub-head-left">
             <span class="mic-indicator" id="mic-dot"></span>
-            <h3>Live Subtitles</h3>
+            <h3 data-i18n="debate.livesubtitles">Live Subtitles</h3>
           </div>
           <div style="display:flex; gap:6px;">
-            <button class="btn btn-sm" onclick="copyTranscript()">Copy</button>
-            <button class="btn btn-sm" onclick="clearSubs()">Clear</button>
+            <button class="btn btn-sm" onclick="copyTranscript()" data-i18n="debate.copy">Copy</button>
+            <button class="btn btn-sm" onclick="clearSubs()" data-i18n="debate.clear">Clear</button>
           </div>
         </div>
-        <div class="subtitles empty" id="subtitles">Start a turn and speak — your words appear here in real time.</div>
+        <div class="subtitles empty" id="subtitles" data-i18n="debate.subtitlesempty">Start a turn and speak — your words appear here in real time.</div>
         <div class="claim-pick" id="claim-pick">
           <span id="claim-pick-text"></span>
-          <button onclick="factCheckSelection()">Fact-check this</button>
+          <button onclick="factCheckSelection()" data-i18n="debate.factcheckthis">Fact-check this</button>
         </div>
       </div>
 
       <div class="factcheck">
         <div class="factcheck-head">
-          <h3>Fact-Check</h3>
-          <div class="fc-note">AI-checked · cross-referenced with Wikipedia</div>
+          <h3 data-i18n="debate.factcheck">Fact-Check</h3>
+          <div class="fc-note" data-i18n="debate.factcheck.note">AI-checked · cross-referenced with Wikipedia</div>
         </div>
         <div class="fc-search">
           <input type="text" id="fc-query"
+                 data-i18n-ph="debate.factcheck.ph"
                  placeholder="Type a claim and hit Enter — flashes green/red like auto fact-check"
                  onkeydown="if(event.key==='Enter'){event.preventDefault();factCheckQuery(this.value);}" />
-          <button class="btn" onclick="factCheckQuery(document.getElementById('fc-query').value)">Search</button>
-          <button class="btn" onclick="googleIt(document.getElementById('fc-query').value)">Google</button>
+          <button class="btn" onclick="factCheckQuery(document.getElementById('fc-query').value)" data-i18n="debate.search">Search</button>
+          <button class="btn" onclick="googleIt(document.getElementById('fc-query').value)" data-i18n="debate.google">Google</button>
         </div>
-        <div style="font-size:11px; color:var(--text-faint); margin: 2px 4px 6px; line-height: 1.5;">
+        <div data-i18n="debate.factcheck.disclaimer" style="font-size:11px; color:var(--text-faint); margin: 2px 4px 6px; line-height: 1.5;">
           If a turn is live and the verdict is confident, the current speaker auto-scores
           (+fact for true, −wrong for false). Off-turn searches just flash without scoring.
         </div>
@@ -2992,7 +3004,7 @@
     <!-- RESULTS SCREEN -->
     <section class="screen" id="screen-results">
       <div class="results-hero">
-        <div class="winner-banner" id="winner-banner">Winner</div>
+        <div class="winner-banner" id="winner-banner" data-i18n="results.winner">Winner</div>
         <div class="winner-name" id="winner-name">—</div>
         <div class="results-topic" id="results-topic">—</div>
       </div>
@@ -3001,8 +3013,8 @@
 
       <div id="ai-verdicts"></div>
       <div style="margin: -6px 0 14px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn" onclick="openJudgeModal()">Try another judge persona</button>
-        <button class="btn" onclick="runArgumentAnalysis()">Run advanced argument analysis</button>
+        <button class="btn" onclick="openJudgeModal()" data-i18n="results.tryjudge">Try another judge persona</button>
+        <button class="btn" onclick="runArgumentAnalysis()" data-i18n="results.runanalysis">Run advanced argument analysis</button>
       </div>
 
       <div id="arg-analysis"></div>
@@ -3015,9 +3027,9 @@
       </div>
 
       <div class="results-actions">
-        <button class="btn" onclick="restartSame()">Rematch</button>
-        <button class="btn" onclick="exportResults()">Export transcript</button>
-        <button class="btn btn-primary" onclick="newDebate()">New debate</button>
+        <button class="btn" onclick="restartSame()" data-i18n="results.rematch">Rematch</button>
+        <button class="btn" onclick="exportResults()" data-i18n="results.export">Export transcript</button>
+        <button class="btn btn-primary" onclick="newDebate()" data-i18n="results.newdebate">New debate</button>
       </div>
     </section>
 
@@ -3029,47 +3041,47 @@
         <p class="upload-lead" data-i18n="online.lead">Two accounts, two devices, one shared round. There's no shared audio channel between devices yet — for crossfire or discussion phases, coordinate by call or in person; Verdict AI syncs the turns, transcript, and scores between you.</p>
 
         <div class="card upload-card" id="online-loggedout" style="display:none;">
-          <h3>Sign in first</h3>
-          <p style="color:var(--text-dim); font-size:13px; margin-bottom:12px;">Online debate needs an account on both sides so we know who's who.</p>
-          <button class="btn btn-primary" onclick="openAuthModal('login')">Log in or sign up</button>
+          <h3 data-i18n="online.signin">Sign in first</h3>
+          <p data-i18n="online.signindesc" style="color:var(--text-dim); font-size:13px; margin-bottom:12px;">Online debate needs an account on both sides so we know who's who.</p>
+          <button class="btn btn-primary" onclick="openAuthModal('login')" data-i18n="online.loginsignup">Log in or sign up</button>
         </div>
 
         <div id="online-lobby" style="display:none;">
           <div class="card upload-card">
-            <h3>Host a room</h3>
+            <h3 data-i18n="online.host">Host a room</h3>
             <div class="form-grid two-col">
               <div class="field">
-                <label>Format</label>
+                <label data-i18n="online.format">Format</label>
                 <select id="online-mode"></select>
               </div>
               <div class="field">
-                <label>Seconds per turn (Casual only)</label>
+                <label data-i18n="online.secondsperturn">Seconds per turn (Casual only)</label>
                 <input type="number" id="online-turn-seconds" value="120" min="15" max="600" step="15" />
               </div>
               <div class="field" style="grid-column: 1 / -1;">
-                <label>Topic</label>
-                <input type="text" id="online-topic" placeholder="e.g. Resolved: The United States federal government should significantly reform its immigration policy." />
+                <label data-i18n="online.topic">Topic</label>
+                <input type="text" id="online-topic" data-i18n-ph="online.topicph" placeholder="e.g. Resolved: The United States federal government should significantly reform its immigration policy." />
               </div>
             </div>
-            <button class="btn btn-primary" onclick="hostOnlineRoom()">Create room</button>
+            <button class="btn btn-primary" onclick="hostOnlineRoom()" data-i18n="online.createroom">Create room</button>
           </div>
           <div class="card upload-card">
-            <h3>Join a room</h3>
+            <h3 data-i18n="online.join">Join a room</h3>
             <div class="field">
-              <label>Room code</label>
+              <label data-i18n="online.roomcode">Room code</label>
               <input type="text" id="online-join-code" placeholder="e.g. K7P2QX" maxlength="12" style="text-transform:uppercase;" />
             </div>
-            <button class="btn btn-primary" onclick="joinOnlineRoom()">Join</button>
+            <button class="btn btn-primary" onclick="joinOnlineRoom()" data-i18n="online.joinbtn">Join</button>
           </div>
           <div id="online-lobby-error" class="upload-error" style="display:none;"></div>
         </div>
 
         <div id="online-room-wrap" style="display:none;">
           <div class="card upload-card" id="online-waiting" style="display:none;">
-            <h3>Waiting for your opponent</h3>
-            <p style="font-size:13px; color:var(--text-dim);">Share this code — they enter it under "Join a room" on their own device:</p>
+            <h3 data-i18n="online.waiting">Waiting for your opponent</h3>
+            <p data-i18n="online.waitingdesc" style="font-size:13px; color:var(--text-dim);">Share this code — they enter it under "Join a room" on their own device:</p>
             <div class="online-room-code" id="online-room-code-display"></div>
-            <button class="btn" onclick="leaveOnlineRoom()">Cancel</button>
+            <button class="btn" onclick="leaveOnlineRoom()" data-i18n="online.cancel">Cancel</button>
           </div>
 
           <div id="online-active" style="display:none;">
@@ -3093,14 +3105,14 @@
                 <div class="timer" id="online-timer">00:00</div>
                 <div class="timer-bar"><div class="timer-fill" id="online-timer-fill"></div></div>
                 <div class="controls" id="online-your-controls" style="display:none;">
-                  <button class="btn" id="online-btn-start" onclick="startOnlineTurn()">Start turn</button>
-                  <button class="btn" id="online-btn-pause" onclick="pauseOnlineTurn()" disabled>Pause</button>
-                  <button class="btn" onclick="endOnlineTurn()">End turn →</button>
+                  <button class="btn" id="online-btn-start" onclick="startOnlineTurn()" data-i18n="debate.startturn">Start turn</button>
+                  <button class="btn" id="online-btn-pause" onclick="pauseOnlineTurn()" disabled data-i18n="debate.pause">Pause</button>
+                  <button class="btn" onclick="endOnlineTurn()" data-i18n="online.endturn">End turn →</button>
                 </div>
                 <div class="controls" id="online-crossfire-controls" style="display:none;">
-                  <button class="btn btn-primary" onclick="continueOnlineCrossfire()">Continue</button>
+                  <button class="btn btn-primary" onclick="continueOnlineCrossfire()" data-i18n="online.continue">Continue</button>
                 </div>
-                <div id="online-waiting-turn" style="display:none; color:var(--text-dim); font-size:13px; text-align:center;">Waiting for your opponent to finish their turn…</div>
+                <div id="online-waiting-turn" data-i18n="online.waitingturn" style="display:none; color:var(--text-dim); font-size:13px; text-align:center;">Waiting for your opponent to finish their turn…</div>
               </div>
             </div>
 
@@ -3110,9 +3122,9 @@
                 <div class="rc-side" id="online-sidelabel-a">—</div>
                 <div class="big-score" id="online-score-a">0</div>
                 <div class="score-controls">
-                  <button class="score-btn plus" onclick="scoreOnline('a','fact',1,'fact')"><span class="val">+fact</span><span class="lbl">verified</span></button>
-                  <button class="score-btn minus" onclick="scoreOnline('a','wrong',-1,'wrong')"><span class="val">−wrong</span><span class="lbl">false claim</span></button>
-                  <button class="score-btn fallacy" onclick="scoreOnline('a','fallacy',-2,'fallacy')"><span class="val">−fallacy</span><span class="lbl">bad logic</span></button>
+                  <button class="score-btn plus" onclick="scoreOnline('a','fact',1,'fact')"><span class="val">+fact</span><span class="lbl" data-i18n="debate.verified">verified</span></button>
+                  <button class="score-btn minus" onclick="scoreOnline('a','wrong',-1,'wrong')"><span class="val">−wrong</span><span class="lbl" data-i18n="debate.falseclaim">false claim</span></button>
+                  <button class="score-btn fallacy" onclick="scoreOnline('a','fallacy',-2,'fallacy')"><span class="val">−fallacy</span><span class="lbl" data-i18n="debate.badlogic">bad logic</span></button>
                 </div>
               </div>
               <div class="result-card" id="online-card-b">
@@ -3120,54 +3132,54 @@
                 <div class="rc-side" id="online-sidelabel-b">—</div>
                 <div class="big-score" id="online-score-b">0</div>
                 <div class="score-controls">
-                  <button class="score-btn plus" onclick="scoreOnline('b','fact',1,'fact')"><span class="val">+fact</span><span class="lbl">verified</span></button>
-                  <button class="score-btn minus" onclick="scoreOnline('b','wrong',-1,'wrong')"><span class="val">−wrong</span><span class="lbl">false claim</span></button>
-                  <button class="score-btn fallacy" onclick="scoreOnline('b','fallacy',-2,'fallacy')"><span class="val">−fallacy</span><span class="lbl">bad logic</span></button>
+                  <button class="score-btn plus" onclick="scoreOnline('b','fact',1,'fact')"><span class="val">+fact</span><span class="lbl" data-i18n="debate.verified">verified</span></button>
+                  <button class="score-btn minus" onclick="scoreOnline('b','wrong',-1,'wrong')"><span class="val">−wrong</span><span class="lbl" data-i18n="debate.falseclaim">false claim</span></button>
+                  <button class="score-btn fallacy" onclick="scoreOnline('b','fallacy',-2,'fallacy')"><span class="val">−fallacy</span><span class="lbl" data-i18n="debate.badlogic">bad logic</span></button>
                 </div>
               </div>
             </div>
 
             <div class="subtitles-wrap">
               <div class="subtitles-head">
-                <div class="sub-head-left"><span class="mic-indicator" id="online-mic-dot"></span><h3>Live</h3></div>
+                <div class="sub-head-left"><span class="mic-indicator" id="online-mic-dot"></span><h3 data-i18n="online.live">Live</h3></div>
               </div>
-              <div class="subtitles empty" id="online-live-subtitles">Nothing yet.</div>
+              <div class="subtitles empty" id="online-live-subtitles" data-i18n="online.nothingyet">Nothing yet.</div>
             </div>
 
             <div class="transcript-log">
-              <h3>Transcript so far</h3>
+              <h3 data-i18n="online.transcriptsofar">Transcript so far</h3>
               <div id="online-transcript-list"></div>
             </div>
 
             <div class="results-actions">
-              <button class="btn btn-danger" onclick="endOnlineDebateNow()">End debate</button>
+              <button class="btn btn-danger" onclick="endOnlineDebateNow()" data-i18n="debate.end">End debate</button>
             </div>
           </div>
 
           <div id="online-ended" style="display:none;">
             <div class="results-hero">
-              <div class="winner-banner">Debate complete</div>
+              <div class="winner-banner" data-i18n="online.complete">Debate complete</div>
               <div class="winner-name" id="online-final-score">—</div>
             </div>
 
             <div class="card upload-card">
-              <h3>AI Judge</h3>
+              <h3 data-i18n="online.aijudge">AI Judge</h3>
               <div class="form-grid two-col">
                 <div class="field" style="grid-column: 1 / -1;">
-                  <label>Judge persona (optional)</label>
+                  <label data-i18n="online.judgepersonaoptional">Judge persona (optional)</label>
                   <select id="online-judge-persona"></select>
                 </div>
               </div>
-              <button class="btn btn-primary" onclick="runOnlineJudge()">Run AI judge</button>
+              <button class="btn btn-primary" onclick="runOnlineJudge()" data-i18n="online.runjudge">Run AI judge</button>
               <div id="online-judge-verdicts" style="margin-top:14px;"></div>
             </div>
 
             <div class="transcript-log">
-              <h3>Full transcript</h3>
+              <h3 data-i18n="online.fulltranscript">Full transcript</h3>
               <div id="online-final-transcript"></div>
             </div>
             <div class="results-actions">
-              <button class="btn btn-primary" onclick="leaveOnlineRoom()">Back to lobby</button>
+              <button class="btn btn-primary" onclick="leaveOnlineRoom()" data-i18n="online.backtolobby">Back to lobby</button>
             </div>
           </div>
         </div>
@@ -3177,65 +3189,65 @@
     <!-- UPLOAD SCREEN -->
     <section class="screen" id="screen-upload">
       <div class="upload-wrap">
-        <div class="eyebrow">Upload mode</div>
-        <h1 class="upload-h1">Score a recorded debate.</h1>
-        <p class="upload-lead">
+        <div class="eyebrow" data-i18n="upload.eyebrow">Upload mode</div>
+        <h1 class="upload-h1" data-i18n="upload.title">Score a recorded debate.</h1>
+        <p class="upload-lead" data-i18n="upload.lead">
           Drop in a video or audio file of a debate and we'll transcribe it,
           attribute each turn to a side, fact-check every claim, flag fallacies,
           and produce the same per-side breakdown the live mode gives you.
         </p>
 
         <div class="card upload-card">
-          <h3>1. Pick a file</h3>
+          <h3 data-i18n="upload.step1">1. Pick a file</h3>
           <div class="upload-drop" id="upload-drop">
             <input type="file" id="upload-file" accept="video/*,audio/*,.mp4,.mov,.webm,.mkv,.m4v,.m4a,.mp3,.wav,.ogg,.opus,.flac" />
             <div class="upload-drop-inner">
               <div class="upload-icon">⏏</div>
-              <div class="upload-cta">Click to choose a file or drop one here</div>
-              <div class="upload-hint">Most video and audio formats supported. We extract the audio in your browser — nothing goes to our servers; the audio only goes to our transcription engine.</div>
+              <div class="upload-cta" data-i18n="upload.dropcta">Click to choose a file or drop one here</div>
+              <div class="upload-hint" data-i18n="upload.drophint">Most video and audio formats supported. We extract the audio in your browser — nothing goes to our servers; the audio only goes to our transcription engine.</div>
             </div>
           </div>
           <div id="upload-file-meta" class="upload-meta" style="display:none;"></div>
         </div>
 
         <div class="card upload-card">
-          <h3>2. Tell us about the debate</h3>
+          <h3 data-i18n="upload.step2">2. Tell us about the debate</h3>
           <div class="form-grid two-col">
             <div class="field">
-              <label>Side A name</label>
-              <input id="upload-name-a" placeholder="e.g. Alice" value="Side A" />
+              <label data-i18n="upload.sidea">Side A name</label>
+              <input id="upload-name-a" data-i18n-ph="upload.sideaph" placeholder="e.g. Alice" value="Side A" />
             </div>
             <div class="field">
-              <label>Side B name</label>
-              <input id="upload-name-b" placeholder="e.g. Bob" value="Side B" />
+              <label data-i18n="upload.sideb">Side B name</label>
+              <input id="upload-name-b" data-i18n-ph="upload.sidebph" placeholder="e.g. Bob" value="Side B" />
             </div>
             <div class="field" style="grid-column: 1 / -1;">
-              <label>Debate topic</label>
-              <input id="upload-topic" placeholder="e.g. Should universal basic income replace welfare?" />
+              <label data-i18n="upload.debatetopic">Debate topic</label>
+              <input id="upload-topic" data-i18n-ph="upload.debatetopicph" placeholder="e.g. Should universal basic income replace welfare?" />
             </div>
             <div class="field">
-              <label>Spoken language</label>
+              <label data-i18n="upload.spokenlang">Spoken language</label>
               <select id="upload-lang">
-                <option value="en" selected>English</option>
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
-                <option value="de">German</option>
-                <option value="it">Italian</option>
-                <option value="pt">Portuguese</option>
-                <option value="nl">Dutch</option>
-                <option value="ja">Japanese</option>
-                <option value="ko">Korean</option>
-                <option value="zh">Chinese</option>
-                <option value="">Auto-detect</option>
+                <option value="en" selected data-i18n="setup.lang.enonly">English</option>
+                <option value="es" data-i18n="setup.lang.es">Spanish</option>
+                <option value="fr" data-i18n="setup.lang.fr">French</option>
+                <option value="de" data-i18n="setup.lang.de">German</option>
+                <option value="it" data-i18n="setup.lang.it">Italian</option>
+                <option value="pt" data-i18n="upload.lang.pt">Portuguese</option>
+                <option value="nl" data-i18n="upload.lang.nl">Dutch</option>
+                <option value="ja" data-i18n="setup.lang.ja">Japanese</option>
+                <option value="ko" data-i18n="upload.lang.ko">Korean</option>
+                <option value="zh" data-i18n="upload.lang.zh">Chinese</option>
+                <option value="" data-i18n="upload.lang.auto">Auto-detect</option>
               </select>
             </div>
           </div>
         </div>
 
         <div class="card upload-card">
-          <h3>3. Run the analysis</h3>
-          <p class="upload-note">A 30-minute debate takes roughly 60–90 seconds to transcribe and 1–2 minutes to score, depending on speech density.</p>
-          <button id="upload-go" class="btn btn-primary" onclick="runUploadAnalysis()" disabled>Analyse debate</button>
+          <h3 data-i18n="upload.step3">3. Run the analysis</h3>
+          <p class="upload-note" data-i18n="upload.step3note">A 30-minute debate takes roughly 60–90 seconds to transcribe and 1–2 minutes to score, depending on speech density.</p>
+          <button id="upload-go" class="btn btn-primary" onclick="runUploadAnalysis()" disabled data-i18n="upload.analyse">Analyse debate</button>
           <div id="upload-progress" class="upload-progress" style="display:none;"></div>
           <div id="upload-error" class="upload-error" style="display:none;"></div>
         </div>
@@ -3271,26 +3283,26 @@
         <div class="card upload-card">
           <div class="form-grid two-col">
             <div class="field">
-              <label>Topic / resolution</label>
-              <input id="cb-topic" placeholder="e.g. Resolved: The United States federal government should significantly reform its immigration policy." />
+              <label data-i18n="casebuilder.topic">Topic / resolution</label>
+              <input id="cb-topic" data-i18n-ph="casebuilder.topicph" placeholder="e.g. Resolved: The United States federal government should significantly reform its immigration policy." />
             </div>
             <div class="field">
-              <label>Your side</label>
+              <label data-i18n="casebuilder.yourside">Your side</label>
               <select id="cb-side">
-                <option value="pro">Pro / Affirmative</option>
-                <option value="con">Con / Negative</option>
+                <option value="pro" data-i18n="casebuilder.pro">Pro / Affirmative</option>
+                <option value="con" data-i18n="casebuilder.con">Con / Negative</option>
               </select>
             </div>
             <div class="field">
-              <label>Format</label>
+              <label data-i18n="setup.rounds.format">Format</label>
               <select id="cb-format"></select>
             </div>
             <div class="field" style="grid-column: 1 / -1;">
-              <label>Angle or approach (optional)</label>
-              <input id="cb-angle" placeholder="e.g. focus on economic impact, avoid rights-based framing" />
+              <label data-i18n="casebuilder.angle">Angle or approach (optional)</label>
+              <input id="cb-angle" data-i18n-ph="casebuilder.angleph" placeholder="e.g. focus on economic impact, avoid rights-based framing" />
             </div>
           </div>
-          <button id="cb-go" class="btn btn-primary" onclick="runCaseBuilder()">Build my case outline</button>
+          <button id="cb-go" class="btn btn-primary" onclick="runCaseBuilder()" data-i18n="casebuilder.build">Build my case outline</button>
           <div id="cb-error" class="upload-error" style="display:none;"></div>
         </div>
 
@@ -3306,16 +3318,16 @@
         <p class="upload-lead" data-i18n="casecheck.lead">Paste a case, a constructive speech, or an outline. The AI flags logical gaps, weak or unsupported warrants, and claims that need evidence — before a judge finds them for you.</p>
 
         <div class="card upload-card">
-          <h3>1. Paste your case</h3>
+          <h3 data-i18n="casecheck.step1">1. Paste your case</h3>
           <div class="field">
-            <label>Topic (optional, helps the check)</label>
-            <input id="cc-topic" placeholder="e.g. Resolved: The United States federal government should significantly reform its immigration policy." />
+            <label data-i18n="casecheck.topic">Topic (optional, helps the check)</label>
+            <input id="cc-topic" data-i18n-ph="casebuilder.topicph" placeholder="e.g. Resolved: The United States federal government should significantly reform its immigration policy." />
           </div>
           <div class="field">
-            <label>Case text</label>
-            <textarea id="cc-text" rows="12" placeholder="Paste your constructive speech, case outline, or brief here..."></textarea>
+            <label data-i18n="casecheck.casetext">Case text</label>
+            <textarea id="cc-text" rows="12" data-i18n-ph="casecheck.casetextph" placeholder="Paste your constructive speech, case outline, or brief here..."></textarea>
           </div>
-          <button id="cc-go" class="btn btn-primary" onclick="runCaseCheck()">Check my case</button>
+          <button id="cc-go" class="btn btn-primary" onclick="runCaseCheck()" data-i18n="casecheck.check">Check my case</button>
           <div id="cc-error" class="upload-error" style="display:none;"></div>
         </div>
 
@@ -3344,11 +3356,11 @@
         <div class="card upload-card">
           <div class="form-grid two-col">
             <div class="field" style="grid-column: 1 / -1;">
-              <label>League code</label>
+              <label data-i18n="setup.league.label2">League code</label>
               <input type="text" id="league-lookup-code" placeholder="e.g. NYCUDL-2026" maxlength="40" />
             </div>
           </div>
-          <button id="league-go" class="btn btn-primary" onclick="loadLeagueDashboard()">Load dashboard</button>
+          <button id="league-go" class="btn btn-primary" onclick="loadLeagueDashboard()" data-i18n="league.load">Load dashboard</button>
           <div id="league-error" class="upload-error" style="display:none;"></div>
         </div>
 
@@ -3359,53 +3371,53 @@
     <!-- HOW IT WORKS SCREEN -->
     <section class="screen" id="screen-how">
       <div class="how-wrap">
-        <div class="eyebrow">How Verdict AI works</div>
-        <h1>From "they're speaking" to "point scored" — in under a second.</h1>
-        <p class="lead">
+        <div class="eyebrow" data-i18n="how.eyebrow">How Verdict AI works</div>
+        <h1 data-i18n="how.h1">From "they're speaking" to "point scored" — in under a second.</h1>
+        <p class="lead" data-i18n="how.lead">
           Say something true and the screen flashes green before you've finished your next
           breath. Say something false and it flashes red. Nobody's raising a hand to fact-check
           you — it's already done. Here's the machinery behind that, round by round.
         </p>
 
         <div class="how-section">
-          <h3><span class="how-badge">1</span> Setup</h3>
-          <p>
+          <h3><span class="how-badge">1</span> <span data-i18n="how.s1.title">Setup</span></h3>
+          <p data-i18n="how.s1.p1">
             Six formats, one screen. Pick Public Forum and the whole speech order snaps into
             place — constructives, crossfires, summaries, final focus, real time limits, zero
             guessing. Parliamentary runs the actual PMC → LOC → MG → MO → LOR → PMR sequence.
             Casual mode throws all of that out — you just set the rounds, the clock, and
             whether sides trade off.
           </p>
-          <p>
+          <p data-i18n="how.s1.p2">
             Pick a topic — a preset or your own — name the debaters, set your spoken language,
             decide what points are worth, and choose whether an AI judge weighs in at the end.
           </p>
         </div>
 
         <div class="how-section">
-          <h3><span class="how-badge">2</span> Live speech capture</h3>
-          <p>
+          <h3><span class="how-badge">2</span> <span data-i18n="how.s2.title">Live speech capture</span></h3>
+          <p data-i18n="how.s2.p1">
             Hit start and the mic goes live. Words show up almost as fast as you say them —
             faded at first, while the recognizer's still deciding what it heard, then locked
             in solid once it's sure. That mic light isn't decoration; it's the only proof
             anyone's actually listening.
           </p>
-          <p>
+          <p data-i18n="how.s2.p2">
             And while you're mid-sentence on your next point, the one you just finished is
             already getting checked behind the scenes.
           </p>
         </div>
 
         <div class="how-section">
-          <h3><span class="how-badge">3</span> Claim detection &amp; fact-check</h3>
-          <p>
+          <h3><span class="how-badge">3</span> <span data-i18n="how.s3.title">Claim detection &amp; fact-check</span></h3>
+          <p data-i18n="how.s3.p1">
             Every sentence has to clear two questions before anything happens:
           </p>
           <ol>
-            <li><b>Is there an actual factual claim here?</b> (Opinions, questions, filler, and predictions get skipped — you won't get dinged for saying "I think.")</li>
-            <li><b>Is that claim true or false</b>, based on well-established public knowledge?</li>
+            <li data-i18n-html="how.s3.li1"><b>Is there an actual factual claim here?</b> (Opinions, questions, filler, and predictions get skipped — you won't get dinged for saying "I think.")</li>
+            <li data-i18n-html="how.s3.li2"><b>Is that claim true or false</b>, based on well-established public knowledge?</li>
           </ol>
-          <p>
+          <p data-i18n="how.s3.p2">
             The checks are paced on purpose — they won't stack up mid-speech, they won't
             double-check something you already said, and they go quiet during crossfire,
             because even we can't tell who's talking over whom.
@@ -3413,14 +3425,14 @@
         </div>
 
         <div class="how-section">
-          <h3><span class="how-badge">4</span> Instant feedback</h3>
-          <p>The verdict comes back fast, and it only goes three ways:</p>
+          <h3><span class="how-badge">4</span> <span data-i18n="how.s4.title">Instant feedback</span></h3>
+          <p data-i18n="how.s4.p1">The verdict comes back fast, and it only goes three ways:</p>
           <ul>
-            <li><span class="color-dot green"></span><b>Verified</b> — screen flashes green, a short high tone plays, and the speaker gets <code>+fact</code>.</li>
-            <li><span class="color-dot red"></span><b>False</b> — screen flashes red, a low tone plays, and the speaker loses <code>−wrong</code>.</li>
-            <li><span class="color-dot amber"></span><b>Unclear</b> or not really a claim — a banner briefly shows what it found, but no points move.</li>
+            <li><span class="color-dot green"></span><span data-i18n-html="how.s4.li1"><b>Verified</b> — screen flashes green, a short high tone plays, and the speaker gets <code>+fact</code>.</span></li>
+            <li><span class="color-dot red"></span><span data-i18n-html="how.s4.li2"><b>False</b> — screen flashes red, a low tone plays, and the speaker loses <code>−wrong</code>.</span></li>
+            <li><span class="color-dot amber"></span><span data-i18n-html="how.s4.li3"><b>Unclear</b> or not really a claim — a banner briefly shows what it found, but no points move.</span></li>
           </ul>
-          <p>
+          <p data-i18n-html="how.s4.p2">
             A banner surfaces the claim in plain English, one line of reasoning, and whoever
             just got scored. Every one of these calls is tagged <code>· auto</code> in the undo
             tray, in case the machine got it wrong and you need to say so.
@@ -3428,27 +3440,27 @@
         </div>
 
         <div class="how-section">
-          <h3><span class="how-badge">5</span> Manual scoring &amp; fallacies</h3>
-          <p>
+          <h3><span class="how-badge">5</span> <span data-i18n="how.s5.title">Manual scoring &amp; fallacies</span></h3>
+          <p data-i18n-html="how.s5.p1">
             The AI doesn't get the final word — you do. Missed a claim? Hit <b>+fact</b> or
             <b>−wrong</b> yourself. Heard a straw man or a slippery slope slide by? The
             <b>−fallacy</b> button pulls up all 16 — pick the one that fits and it docks the
             point and tags the transcript right where it happened.
           </p>
-          <p>
+          <p data-i18n="how.s5.p2">
             Or skip the button entirely — highlight the phrase yourself in the live subtitles
             and a "Fact-check this" shortcut pops up, running the exact same check on demand.
           </p>
         </div>
 
         <div class="how-section">
-          <h3><span class="how-badge">6</span> End of debate</h3>
-          <p>
+          <h3><span class="how-badge">6</span> <span data-i18n="how.s6.title">End of debate</span></h3>
+          <p data-i18n="how.s6.p1">
             When the clock runs out — or you end it yourself — everything lands on Results:
             final scores, the fact / wrong / fallacy tally for each side, a highlight reel of
             every moment that got flagged, and the full transcript, ready to export.
           </p>
-          <p>
+          <p data-i18n-html="how.s6.p2">
             Turn on <b>AI Judging</b> and you also get an actual verdict — a points-based one
             that just does the math, or a substance-based one that reads the whole transcript
             and calls who made the stronger argument.
@@ -3456,25 +3468,25 @@
         </div>
 
         <div class="how-section">
-          <h3><span class="how-badge">·</span> The six formats at a glance</h3>
+          <h3><span class="how-badge">·</span> <span data-i18n="how.s7.title">The six formats at a glance</span></h3>
           <table class="mode-table">
             <thead>
-              <tr><th>Format</th><th>Sides</th><th>Structure</th></tr>
+              <tr><th data-i18n="how.table.format">Format</th><th data-i18n="how.table.sides">Sides</th><th data-i18n="how.table.structure">Structure</th></tr>
             </thead>
             <tbody>
-              <tr><td><b>Casual</b></td><td>Debater A vs B</td><td>Configurable rounds &amp; timer.</td></tr>
-              <tr><td><b>Public Forum</b></td><td>Pro vs Con</td><td>Constructives · rebuttals · summaries · three crossfires · final focus.</td></tr>
-              <tr><td><b>Lincoln-Douglas</b></td><td>Affirmative vs Negative</td><td>1-on-1 values debate; AC · NC with cross-ex · 1AR · NR · 2AR.</td></tr>
-              <tr><td><b>Policy (CX)</b></td><td>Affirmative vs Negative</td><td>Evidence-heavy; four constructives, four cross-exams, four rebuttals.</td></tr>
-              <tr><td><b>Parliamentary</b></td><td>Government vs Opposition</td><td>PMC · LOC · MG · MO · LOR · PMR. Points of information expected.</td></tr>
-              <tr><td><b>Mock Trial</b></td><td>Prosecution vs Defense</td><td>Openings · direct &amp; cross exams per witness · closings · rebuttal.</td></tr>
+              <tr><td data-i18n-html="how.table.r1.f"><b>Casual</b></td><td data-i18n="how.table.r1.s">Debater A vs B</td><td data-i18n="how.table.r1.st">Configurable rounds &amp; timer.</td></tr>
+              <tr><td data-i18n-html="how.table.r2.f"><b>Public Forum</b></td><td data-i18n="how.table.r2.s">Pro vs Con</td><td data-i18n="how.table.r2.st">Constructives · rebuttals · summaries · three crossfires · final focus.</td></tr>
+              <tr><td data-i18n-html="how.table.r3.f"><b>Lincoln-Douglas</b></td><td data-i18n="how.table.r3.s">Affirmative vs Negative</td><td data-i18n="how.table.r3.st">1-on-1 values debate; AC · NC with cross-ex · 1AR · NR · 2AR.</td></tr>
+              <tr><td data-i18n-html="how.table.r4.f"><b>Policy (CX)</b></td><td data-i18n="how.table.r4.s">Affirmative vs Negative</td><td data-i18n="how.table.r4.st">Evidence-heavy; four constructives, four cross-exams, four rebuttals.</td></tr>
+              <tr><td data-i18n-html="how.table.r5.f"><b>Parliamentary</b></td><td data-i18n="how.table.r5.s">Government vs Opposition</td><td data-i18n="how.table.r5.st">PMC · LOC · MG · MO · LOR · PMR. Points of information expected.</td></tr>
+              <tr><td data-i18n-html="how.table.r6.f"><b>Mock Trial</b></td><td data-i18n="how.table.r6.s">Prosecution vs Defense</td><td data-i18n="how.table.r6.st">Openings · direct &amp; cross exams per witness · closings · rebuttal.</td></tr>
             </tbody>
           </table>
         </div>
 
         <div class="how-section">
-          <h3><span class="how-badge">·</span> Privacy</h3>
-          <p>
+          <h3><span class="how-badge">·</span> <span data-i18n="how.privacy.title">Privacy</span></h3>
+          <p data-i18n="how.privacy.p">
             Your audio never leaves your browser. What gets sent out is the text of the one
             sentence being checked, nothing more — not a recording, not the round before it,
             not your name. Nothing is stored anywhere afterward. And if the fact-checker can't
@@ -3485,8 +3497,8 @@
         </div>
 
         <div class="how-section">
-          <h3><span class="how-badge">·</span> When to overrule the AI</h3>
-          <p>
+          <h3><span class="how-badge">·</span> <span data-i18n="how.overrule.title">When to overrule the AI</span></h3>
+          <p data-i18n-html="how.overrule.p">
             It will get things wrong sometimes — statistics, very recent events, and anything
             that hinges on exact wording are where it stumbles. It's tuned to stay quiet unless
             it's genuinely confident, but "genuinely confident" still isn't "certain." Watch the
@@ -3496,7 +3508,7 @@
         </div>
 
         <div style="text-align:center; margin: 24px 0 12px;">
-          <button class="btn btn-primary" onclick="navTo('screen-setup')">Back to setup</button>
+          <button class="btn btn-primary" onclick="navTo('screen-setup')" data-i18n="how.backtosetup">Back to setup</button>
         </div>
       </div>
     </section>
@@ -3504,11 +3516,11 @@
   <footer class="app-footer">
     <div class="footer-mark">Verdict AI</div>
     <div class="footer-links">
-      <a href="javascript:void(0)" onclick="openTosModal()">Terms of Service</a>
+      <a href="javascript:void(0)" onclick="openTosModal()" data-i18n="footer.tos">Terms of Service</a>
       <span class="footer-sep">·</span>
-      <a href="javascript:void(0)" onclick="openPrivacyModal()">Privacy Policy</a>
+      <a href="javascript:void(0)" onclick="openPrivacyModal()" data-i18n="footer.privacy">Privacy Policy</a>
       <span class="footer-sep">·</span>
-      <span>AI calls can be wrong — you're always the final judge.</span>
+      <span data-i18n="footer.aidisclaimer">AI calls can be wrong — you're always the final judge.</span>
       <span class="footer-sep">·</span>
       <span>&copy; <span id="footer-year"></span> Verdict AI</span>
     </div>
@@ -3518,11 +3530,11 @@
 <!-- Fallacy picker modal -->
 <div class="modal-wrap" id="fallacy-modal">
   <div class="modal">
-    <h2>Pick the fallacy</h2>
-    <div class="modal-sub">Tap the one that best fits. Docks <span id="fallacy-penalty-txt">2</span> point(s). You can undo from the tray.</div>
+    <h2 data-i18n="modal.fallacy.title">Pick the fallacy</h2>
+    <div class="modal-sub" data-i18n-html="modal.fallacy.sub">Tap the one that best fits. Docks <span id="fallacy-penalty-txt">2</span> point(s). You can undo from the tray.</div>
     <div class="fallacy-list" id="fallacy-list"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeFallacyModal()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeFallacyModal()" data-i18n="modal.cancel">Cancel</button>
     </div>
   </div>
 </div>
@@ -3530,11 +3542,11 @@
 <!-- Judge Simulator: persona picker modal -->
 <div class="modal-wrap" id="judge-modal">
   <div class="modal">
-    <h2>Run another judge persona</h2>
-    <div class="modal-sub">Re-judge this same round from a different judge's perspective and compare the decision.</div>
+    <h2 data-i18n="modal.judge.title">Run another judge persona</h2>
+    <div class="modal-sub" data-i18n="modal.judge.sub">Re-judge this same round from a different judge's perspective and compare the decision.</div>
     <div class="fallacy-list" id="judge-list"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeJudgeModal()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeJudgeModal()" data-i18n="modal.cancel">Cancel</button>
     </div>
   </div>
 </div>
@@ -3542,8 +3554,8 @@
 <!-- Terms of Service modal -->
 <div class="modal-wrap" id="tos-modal">
   <div class="modal tos-modal">
-    <h2>Terms of Service</h2>
-    <div class="modal-sub">Last updated <span id="tos-date"></span> · See also our <a href="javascript:void(0)" onclick="closeTosModal(); openPrivacyModal();">Privacy Policy</a></div>
+    <h2 data-i18n="footer.tos">Terms of Service</h2>
+    <div class="modal-sub" data-i18n-html="modal.tos.sub">Last updated <span id="tos-date"></span> · See also our <a href="javascript:void(0)" onclick="closeTosModal(); openPrivacyModal();">Privacy Policy</a></div>
     <div class="tos-body">
       <p>By accessing or using Verdict AI (the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you don't agree, don't use the Service. If you're using it through a class, team, or league, your program may impose additional rules on top of these — follow whichever is stricter.</p>
 
@@ -3601,8 +3613,8 @@
 <!-- Privacy Policy modal -->
 <div class="modal-wrap" id="privacy-modal">
   <div class="modal tos-modal">
-    <h2>Privacy Policy</h2>
-    <div class="modal-sub">Last updated <span id="privacy-date"></span> · See also our <a href="javascript:void(0)" onclick="closePrivacyModal(); openTosModal();">Terms of Service</a></div>
+    <h2 data-i18n="footer.privacy">Privacy Policy</h2>
+    <div class="modal-sub" data-i18n-html="modal.privacy.sub">Last updated <span id="privacy-date"></span> · See also our <a href="javascript:void(0)" onclick="closePrivacyModal(); openTosModal();">Terms of Service</a></div>
     <div class="tos-body">
       <h4>1. What we collect</h4>
       <p>Without an account: nothing leaves your browser except the specific text/audio needed to run a feature you actively triggered (a fact-check, a judge verdict, a Case Checker request). Practice history, progress stats, and settings are stored only in your browser's local storage.</p>
@@ -3642,27 +3654,27 @@
 <!-- Account: log in / sign up modal -->
 <div class="modal-wrap" id="auth-modal">
   <div class="modal">
-    <h2 id="auth-modal-title">Log in</h2>
-    <div class="modal-sub">Optional — Verdict AI works fully without an account. Signing in just syncs your progress across devices.</div>
+    <h2 id="auth-modal-title" data-i18n="auth.login">Log in</h2>
+    <div class="modal-sub" data-i18n="auth.optional">Optional — Verdict AI works fully without an account. Signing in just syncs your progress across devices.</div>
     <div class="field" id="auth-name-field" style="display:none;">
-      <label>Display name</label>
-      <input type="text" id="auth-name" placeholder="e.g. Jordan" maxlength="60" />
+      <label data-i18n="auth.displayname">Display name</label>
+      <input type="text" id="auth-name" data-i18n-ph="auth.displaynameph" placeholder="e.g. Jordan" maxlength="60" />
     </div>
     <div class="field">
-      <label>Email</label>
+      <label data-i18n="auth.email">Email</label>
       <input type="email" id="auth-email" placeholder="you@example.com" />
     </div>
     <div class="field">
-      <label>Password</label>
-      <input type="password" id="auth-password" placeholder="At least 8 characters" onkeydown="if(event.key==='Enter'){event.preventDefault();submitAuth();}" />
+      <label data-i18n="auth.password">Password</label>
+      <input type="password" id="auth-password" data-i18n-ph="auth.passwordph" placeholder="At least 8 characters" onkeydown="if(event.key==='Enter'){event.preventDefault();submitAuth();}" />
     </div>
     <div id="auth-error" class="upload-error" style="display:none;"></div>
-    <div class="note">By continuing you agree to the <a href="javascript:void(0)" onclick="openTosModal()">Terms of Service</a> and <a href="javascript:void(0)" onclick="openPrivacyModal()">Privacy Policy</a>.</div>
+    <div class="note" data-i18n-html="auth.agree">By continuing you agree to the <a href="javascript:void(0)" onclick="openTosModal()">Terms of Service</a> and <a href="javascript:void(0)" onclick="openPrivacyModal()">Privacy Policy</a>.</div>
     <div class="modal-actions" style="justify-content: space-between; margin-top: 16px;">
-      <button class="btn btn-ghost" type="button" onclick="toggleAuthMode()" id="auth-toggle-btn">Need an account? Sign up</button>
+      <button class="btn btn-ghost" type="button" onclick="toggleAuthMode()" id="auth-toggle-btn" data-i18n="auth.needsignup">Need an account? Sign up</button>
       <div style="display:flex; gap:8px;">
-        <button class="btn btn-ghost" type="button" onclick="closeAuthModal()">Cancel</button>
-        <button class="btn btn-primary" type="button" id="auth-submit-btn" onclick="submitAuth()">Log in</button>
+        <button class="btn btn-ghost" type="button" onclick="closeAuthModal()" data-i18n="modal.cancel">Cancel</button>
+        <button class="btn btn-primary" type="button" id="auth-submit-btn" onclick="submitAuth()" data-i18n="auth.login">Log in</button>
       </div>
     </div>
   </div>
@@ -3671,29 +3683,29 @@
 <!-- Profile modal -->
 <div class="modal-wrap" id="profile-modal">
   <div class="modal">
-    <h2>Your profile</h2>
-    <div class="modal-sub">Visible only to you right now — profiles aren't shown to other users yet.</div>
+    <h2 data-i18n="profile.title">Your profile</h2>
+    <div class="modal-sub" data-i18n="profile.visible">Visible only to you right now — profiles aren't shown to other users yet.</div>
     <div class="profile-avatar-row">
       <img id="profile-avatar-preview" class="profile-avatar-preview" src="" alt="" style="display:none;" />
       <div id="profile-avatar-placeholder" class="profile-avatar-preview profile-avatar-fallback">?</div>
       <div class="profile-avatar-actions">
         <input type="file" id="profile-avatar-file" accept="image/*" style="display:none;" onchange="handleAvatarFile(this)" />
-        <button class="btn btn-sm" type="button" onclick="document.getElementById('profile-avatar-file').click()">Change photo</button>
-        <button class="btn btn-sm btn-ghost" type="button" id="profile-avatar-remove" onclick="removeAvatar()" style="display:none;">Remove</button>
+        <button class="btn btn-sm" type="button" onclick="document.getElementById('profile-avatar-file').click()" data-i18n="profile.changephoto">Change photo</button>
+        <button class="btn btn-sm btn-ghost" type="button" id="profile-avatar-remove" onclick="removeAvatar()" style="display:none;" data-i18n="profile.remove">Remove</button>
       </div>
     </div>
     <div class="field">
-      <label>Display name</label>
+      <label data-i18n="auth.displayname">Display name</label>
       <input type="text" id="profile-name" maxlength="60" />
     </div>
     <div class="field">
-      <label>Bio</label>
-      <textarea id="profile-bio" maxlength="500" rows="4" placeholder="A sentence or two — your events, your league, whatever you want."></textarea>
+      <label data-i18n="profile.bio">Bio</label>
+      <textarea id="profile-bio" maxlength="500" rows="4" data-i18n-ph="profile.bioph" placeholder="A sentence or two — your events, your league, whatever you want."></textarea>
     </div>
     <div id="profile-error" class="upload-error" style="display:none;"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" type="button" onclick="closeProfileModal()">Cancel</button>
-      <button class="btn btn-primary" type="button" id="profile-save-btn" onclick="saveProfile()">Save</button>
+      <button class="btn btn-ghost" type="button" onclick="closeProfileModal()" data-i18n="modal.cancel">Cancel</button>
+      <button class="btn btn-primary" type="button" id="profile-save-btn" onclick="saveProfile()" data-i18n="profile.save">Save</button>
     </div>
   </div>
 </div>
@@ -3701,11 +3713,11 @@
 <div class="toast-wrap" id="toasts"></div>
 
 <div id="cookie-banner" class="cookie-banner" style="display:none;">
-  <div class="cookie-text">
+  <div class="cookie-text" data-i18n-html="cookie.text">
     Verdict AI runs on your browser's local storage — and, if you sign in, a login token — instead of ad-tracking cookies.
     <a href="javascript:void(0)" onclick="openPrivacyModal()">Privacy Policy</a>
   </div>
-  <button class="btn btn-sm btn-primary" onclick="acceptCookieNotice()">Got it</button>
+  <button class="btn btn-sm btn-primary" onclick="acceptCookieNotice()" data-i18n="cookie.gotit">Got it</button>
 </div>
 
 <script>
@@ -4055,6 +4067,186 @@ const TRANSLATIONS = {
     "online.eyebrow": "Online Debate",
     "online.title": "Debate someone on another device.",
     "online.lead": "Two accounts, two devices, one shared round. There's no shared audio channel between devices yet — for crossfire or discussion phases, coordinate by call or in person; Verdict AI syncs the turns, transcript, and scores between you.",
+
+    "setup.mode.format": "Format",
+    "setup.practice.desc": "Solo practice against the clock — no opponent needed. Get a full AI judge feedback report after, then rerun the same speech to see if your score improves. Works with Casual mode (switches you there automatically).",
+    "setup.topic.customlabel": "Or write a custom topic / resolution",
+    "setup.topic.customph": "e.g. Resolved: The United States federal government should significantly reform its immigration policy.",
+    "setup.rounds.numrounds": "Number of rounds",
+    "setup.rounds.seconds": "Seconds per turn",
+    "setup.rounds.format": "Format",
+    "setup.rounds.formatalt": "Alternate (A → B → A → B)",
+    "setup.rounds.formatfull": "Full round (A, then B)",
+    "setup.debaters.phA": "Debater A",
+    "setup.debaters.phB": "Debater B",
+    "setup.league.label": "League code (optional)",
+    "setup.league.label2": "League code",
+    "setup.league.note": "If your coach gave you a code, results get added to your league's dashboard. This isn't a password — anyone with the code can view or submit to it.",
+    "setup.lang.label": "Language (speech recognition)",
+    "setup.lang.enus": "English (US)", "setup.lang.engb": "English (UK)", "setup.lang.enonly": "English",
+    "setup.lang.es": "Spanish", "setup.lang.fr": "French", "setup.lang.de": "German", "setup.lang.it": "Italian",
+    "setup.lang.pt": "Portuguese (BR)", "setup.lang.pl": "Polish", "setup.lang.ja": "Japanese", "setup.lang.zh": "Chinese (Mandarin)",
+    "setup.points.enable": "Enable point scoring",
+    "setup.points.enabledesc": "Tracks verified facts, false claims, and logical fallacies. Off for pure discussion mode.",
+    "setup.points.factlabel": "Points for a verified fact (+)",
+    "setup.points.wronglabel": "Penalty for an incorrect fact (−)",
+    "setup.points.fallacylabel": "Penalty for a logical fallacy (−)",
+    "setup.ai.autofc": "Auto fact-check",
+    "setup.ai.autofcdesc": "Listen to each speaker in real time. The moment a factual claim comes out of someone's mouth, the screen flashes green (+fact) if it checks out or red (−wrong) if it doesn't.",
+    "setup.ai.fcengine": "Fact-check engine",
+    "setup.ai.fcstandard": "Standard (fast)",
+    "setup.ai.model": "Model",
+    "setup.ai.testconn": "Test connection",
+    "setup.ai.whisper": "High-accuracy transcription",
+    "setup.ai.whisperdesc": "A sharper listening mode for accents, technical terms, and noisy rooms — captures audio in short bursts instead of relying on your browser's built-in speech recognition.",
+    "setup.ai.autofallacy": "Auto fallacy detection",
+    "setup.ai.autofallacydesc": "A second AI pass watches for classical logical fallacies (ad hominem, straw man, etc.) and surfaces suggestions in a tray. Click \"Confirm\" to apply the penalty.",
+    "setup.ai.respect": "Respect filter",
+    "setup.ai.respectdesc": "A third AI pass watches for slurs, discriminatory language, or personal attacks — never for legitimate discussion of sensitive topics. In Practice Mode it privately coaches you on rephrasing; in a live round it discreetly alerts the moderator panel (bottom-right) instead of interrupting or auto-penalizing.",
+    "setup.ai.verdictpoints": "Verdict by points",
+    "setup.ai.verdictpointsdesc": "At the end, announce the winner based on total points, with commentary on the tally.",
+    "setup.ai.verdictsubstance": "Verdict by substance",
+    "setup.ai.verdictsubstancedesc": "Analyze the actual arguments in the transcripts and decide who made the stronger case.",
+    "setup.ai.judgepersona": "Judge persona (Judge Simulator)",
+    "setup.ai.judgepersonanote": "Pick who's judging before the round — a lay judge, flow judge, tech judge, and more each score differently. After the round, use \"Try another judge persona\" on Results to see how the decision changes.",
+    "setup.ai.engine": "AI judge engine",
+    "setup.ai.enginestandard": "Standard (recommended)", "setup.ai.engineclaude": "Claude", "setup.ai.enginegpt": "GPT",
+    "setup.ai.enginenone": "None — basic scoring only",
+    "setup.ai.apikey": "API key (leave blank to use the default)",
+    "setup.ai.apikeyph": "Leave blank unless you're running your own key",
+    "setup.ai.apikeynote": "Most setups never need this — the app already comes wired up. Only fill this in if you're self-hosting with your own key.",
+
+    "debate.startturn": "Start turn", "debate.pause": "Pause", "debate.skip": "Skip →", "debate.end": "End debate",
+    "debate.undolabel": "Recent · click to undo", "debate.clearall": "Clear all",
+    "debate.verified": "verified", "debate.falseclaim": "false claim", "debate.badlogic": "bad logic",
+    "debate.facts": "facts", "debate.wrong": "wrong", "debate.fallacies": "fallacies",
+    "debate.livesubtitles": "Live Subtitles", "debate.copy": "Copy", "debate.clear": "Clear",
+    "debate.subtitlesempty": "Start a turn and speak — your words appear here in real time.",
+    "debate.factcheckthis": "Fact-check this",
+    "debate.factcheck": "Fact-Check", "debate.factcheck.note": "AI-checked · cross-referenced with Wikipedia",
+    "debate.factcheck.ph": "Type a claim and hit Enter — flashes green/red like auto fact-check",
+    "debate.search": "Search", "debate.google": "Google",
+    "debate.factcheck.disclaimer": "If a turn is live and the verdict is confident, the current speaker auto-scores (+fact for true, −wrong for false). Off-turn searches just flash without scoring.",
+
+    "results.winner": "Winner", "results.tryjudge": "Try another judge persona",
+    "results.runanalysis": "Run advanced argument analysis", "results.rematch": "Rematch",
+    "results.export": "Export transcript", "results.newdebate": "New debate",
+
+    "online.signin": "Sign in first",
+    "online.signindesc": "Online debate needs an account on both sides so we know who's who.",
+    "online.loginsignup": "Log in or sign up",
+    "online.host": "Host a room", "online.format": "Format",
+    "online.secondsperturn": "Seconds per turn (Casual only)",
+    "online.topic": "Topic",
+    "online.topicph": "e.g. Resolved: The United States federal government should significantly reform its immigration policy.",
+    "online.createroom": "Create room", "online.join": "Join a room", "online.roomcode": "Room code",
+    "online.joinbtn": "Join",
+    "online.waiting": "Waiting for your opponent",
+    "online.waitingdesc": "Share this code — they enter it under \"Join a room\" on their own device:",
+    "online.cancel": "Cancel", "online.endturn": "End turn →", "online.continue": "Continue",
+    "online.waitingturn": "Waiting for your opponent to finish their turn…",
+    "online.live": "Live", "online.nothingyet": "Nothing yet.", "online.transcriptsofar": "Transcript so far",
+    "online.complete": "Debate complete", "online.aijudge": "AI Judge",
+    "online.judgepersonaoptional": "Judge persona (optional)", "online.runjudge": "Run AI judge",
+    "online.fulltranscript": "Full transcript", "online.backtolobby": "Back to lobby",
+
+    "upload.eyebrow": "Upload mode", "upload.title": "Score a recorded debate.",
+    "upload.lead": "Drop in a video or audio file of a debate and we'll transcribe it, attribute each turn to a side, fact-check every claim, flag fallacies, and produce the same per-side breakdown the live mode gives you.",
+    "upload.step1": "1. Pick a file",
+    "upload.dropcta": "Click to choose a file or drop one here",
+    "upload.drophint": "Most video and audio formats supported. We extract the audio in your browser — nothing goes to our servers; the audio only goes to our transcription engine.",
+    "upload.step2": "2. Tell us about the debate",
+    "upload.sidea": "Side A name", "upload.sideaph": "e.g. Alice",
+    "upload.sideb": "Side B name", "upload.sidebph": "e.g. Bob",
+    "upload.debatetopic": "Debate topic", "upload.debatetopicph": "e.g. Should universal basic income replace welfare?",
+    "upload.spokenlang": "Spoken language",
+    "upload.lang.pt": "Portuguese", "upload.lang.nl": "Dutch", "upload.lang.ko": "Korean",
+    "upload.lang.zh": "Chinese", "upload.lang.auto": "Auto-detect",
+    "upload.step3": "3. Run the analysis",
+    "upload.step3note": "A 30-minute debate takes roughly 60–90 seconds to transcribe and 1–2 minutes to score, depending on speech density.",
+    "upload.analyse": "Analyse debate",
+
+    "casebuilder.topic": "Topic / resolution",
+    "casebuilder.topicph": "e.g. Resolved: The United States federal government should significantly reform its immigration policy.",
+    "casebuilder.yourside": "Your side", "casebuilder.pro": "Pro / Affirmative", "casebuilder.con": "Con / Negative",
+    "casebuilder.angle": "Angle or approach (optional)",
+    "casebuilder.angleph": "e.g. focus on economic impact, avoid rights-based framing",
+    "casebuilder.build": "Build my case outline",
+
+    "casecheck.step1": "1. Paste your case",
+    "casecheck.topic": "Topic (optional, helps the check)",
+    "casecheck.casetext": "Case text",
+    "casecheck.casetextph": "Paste your constructive speech, case outline, or brief here...",
+    "casecheck.check": "Check my case",
+
+    "league.load": "Load dashboard",
+
+    "how.eyebrow": "How Verdict AI works",
+    "how.h1": "From \"they're speaking\" to \"point scored\" — in under a second.",
+    "how.lead": "Say something true and the screen flashes green before you've finished your next breath. Say something false and it flashes red. Nobody's raising a hand to fact-check you — it's already done. Here's the machinery behind that, round by round.",
+    "how.s1.title": "Setup",
+    "how.s1.p1": "Six formats, one screen. Pick Public Forum and the whole speech order snaps into place — constructives, crossfires, summaries, final focus, real time limits, zero guessing. Parliamentary runs the actual PMC → LOC → MG → MO → LOR → PMR sequence. Casual mode throws all of that out — you just set the rounds, the clock, and whether sides trade off.",
+    "how.s1.p2": "Pick a topic — a preset or your own — name the debaters, set your spoken language, decide what points are worth, and choose whether an AI judge weighs in at the end.",
+    "how.s2.title": "Live speech capture",
+    "how.s2.p1": "Hit start and the mic goes live. Words show up almost as fast as you say them — faded at first, while the recognizer's still deciding what it heard, then locked in solid once it's sure. That mic light isn't decoration; it's the only proof anyone's actually listening.",
+    "how.s2.p2": "And while you're mid-sentence on your next point, the one you just finished is already getting checked behind the scenes.",
+    "how.s3.title": "Claim detection &amp; fact-check",
+    "how.s3.p1": "Every sentence has to clear two questions before anything happens:",
+    "how.s3.li1": "<b>Is there an actual factual claim here?</b> (Opinions, questions, filler, and predictions get skipped — you won't get dinged for saying \"I think.\")",
+    "how.s3.li2": "<b>Is that claim true or false</b>, based on well-established public knowledge?",
+    "how.s3.p2": "The checks are paced on purpose — they won't stack up mid-speech, they won't double-check something you already said, and they go quiet during crossfire, because even we can't tell who's talking over whom.",
+    "how.s4.title": "Instant feedback",
+    "how.s4.p1": "The verdict comes back fast, and it only goes three ways:",
+    "how.s4.li1": "<b>Verified</b> — screen flashes green, a short high tone plays, and the speaker gets <code>+fact</code>.",
+    "how.s4.li2": "<b>False</b> — screen flashes red, a low tone plays, and the speaker loses <code>−wrong</code>.",
+    "how.s4.li3": "<b>Unclear</b> or not really a claim — a banner briefly shows what it found, but no points move.",
+    "how.s4.p2": "A banner surfaces the claim in plain English, one line of reasoning, and whoever just got scored. Every one of these calls is tagged <code>· auto</code> in the undo tray, in case the machine got it wrong and you need to say so.",
+    "how.s5.title": "Manual scoring &amp; fallacies",
+    "how.s5.p1": "The AI doesn't get the final word — you do. Missed a claim? Hit <b>+fact</b> or <b>−wrong</b> yourself. Heard a straw man or a slippery slope slide by? The <b>−fallacy</b> button pulls up all 16 — pick the one that fits and it docks the point and tags the transcript right where it happened.",
+    "how.s5.p2": "Or skip the button entirely — highlight the phrase yourself in the live subtitles and a \"Fact-check this\" shortcut pops up, running the exact same check on demand.",
+    "how.s6.title": "End of debate",
+    "how.s6.p1": "When the clock runs out — or you end it yourself — everything lands on Results: final scores, the fact / wrong / fallacy tally for each side, a highlight reel of every moment that got flagged, and the full transcript, ready to export.",
+    "how.s6.p2": "Turn on <b>AI Judging</b> and you also get an actual verdict — a points-based one that just does the math, or a substance-based one that reads the whole transcript and calls who made the stronger argument.",
+    "how.s7.title": "The six formats at a glance",
+    "how.table.format": "Format", "how.table.sides": "Sides", "how.table.structure": "Structure",
+    "how.table.r1.f": "<b>Casual</b>", "how.table.r1.s": "Debater A vs B", "how.table.r1.st": "Configurable rounds &amp; timer.",
+    "how.table.r2.f": "<b>Public Forum</b>", "how.table.r2.s": "Pro vs Con", "how.table.r2.st": "Constructives · rebuttals · summaries · three crossfires · final focus.",
+    "how.table.r3.f": "<b>Lincoln-Douglas</b>", "how.table.r3.s": "Affirmative vs Negative", "how.table.r3.st": "1-on-1 values debate; AC · NC with cross-ex · 1AR · NR · 2AR.",
+    "how.table.r4.f": "<b>Policy (CX)</b>", "how.table.r4.s": "Affirmative vs Negative", "how.table.r4.st": "Evidence-heavy; four constructives, four cross-exams, four rebuttals.",
+    "how.table.r5.f": "<b>Parliamentary</b>", "how.table.r5.s": "Government vs Opposition", "how.table.r5.st": "PMC · LOC · MG · MO · LOR · PMR. Points of information expected.",
+    "how.table.r6.f": "<b>Mock Trial</b>", "how.table.r6.s": "Prosecution vs Defense", "how.table.r6.st": "Openings · direct &amp; cross exams per witness · closings · rebuttal.",
+    "how.privacy.title": "Privacy",
+    "how.privacy.p": "Your audio never leaves your browser. What gets sent out is the text of the one sentence being checked, nothing more — not a recording, not the round before it, not your name. Nothing is stored anywhere afterward. And if the fact-checker can't reach its engine for any reason, it doesn't throw an error at you — it just goes quiet and hands control back, and the app keeps running in fully-manual mode like nothing happened.",
+    "how.overrule.title": "When to overrule the AI",
+    "how.overrule.p": "It will get things wrong sometimes — statistics, very recent events, and anything that hinges on exact wording are where it stumbles. It's tuned to stay quiet unless it's genuinely confident, but \"genuinely confident\" still isn't \"certain.\" Watch the banner. If a call looks off, it probably is — <b>undo</b> is one click away in the tray, every time.",
+    "how.backtosetup": "Back to setup",
+
+    "footer.tos": "Terms of Service", "footer.privacy": "Privacy Policy",
+    "footer.aidisclaimer": "AI calls can be wrong — you're always the final judge.",
+
+    "modal.cancel": "Cancel",
+    "modal.fallacy.title": "Pick the fallacy",
+    "modal.fallacy.sub": "Tap the one that best fits. Docks <span id=\"fallacy-penalty-txt\">2</span> point(s). You can undo from the tray.",
+    "modal.judge.title": "Run another judge persona",
+    "modal.judge.sub": "Re-judge this same round from a different judge's perspective and compare the decision.",
+    "modal.tos.sub": "Last updated <span id=\"tos-date\"></span> · See also our <a href=\"javascript:void(0)\" onclick=\"closeTosModal(); openPrivacyModal();\">Privacy Policy</a>",
+    "modal.privacy.sub": "Last updated <span id=\"privacy-date\"></span> · See also our <a href=\"javascript:void(0)\" onclick=\"closePrivacyModal(); openTosModal();\">Terms of Service</a>",
+
+    "auth.login": "Log in", "auth.signup": "Sign up",
+    "auth.needsignup": "Need an account? Sign up", "auth.havelogin": "Already have an account? Log in",
+    "auth.optional": "Optional — Verdict AI works fully without an account. Signing in just syncs your progress across devices.",
+    "auth.displayname": "Display name", "auth.displaynameph": "e.g. Jordan",
+    "auth.email": "Email", "auth.password": "Password", "auth.passwordph": "At least 8 characters",
+    "auth.agree": "By continuing you agree to the <a href=\"javascript:void(0)\" onclick=\"openTosModal()\">Terms of Service</a> and <a href=\"javascript:void(0)\" onclick=\"openPrivacyModal()\">Privacy Policy</a>.",
+
+    "profile.title": "Your profile",
+    "profile.visible": "Visible only to you right now — profiles aren't shown to other users yet.",
+    "profile.changephoto": "Change photo", "profile.remove": "Remove",
+    "profile.bio": "Bio", "profile.bioph": "A sentence or two — your events, your league, whatever you want.",
+    "profile.save": "Save",
+
+    "cookie.text": "Verdict AI runs on your browser's local storage — and, if you sign in, a login token — instead of ad-tracking cookies.\n    <a href=\"javascript:void(0)\" onclick=\"openPrivacyModal()\">Privacy Policy</a>",
+    "cookie.gotit": "Got it",
   },
   es: {
     "nav.setup": "Configurar", "nav.debate": "Debate", "nav.online": "En línea", "nav.upload": "Subir", "nav.results": "Resultados",
@@ -4092,6 +4284,186 @@ const TRANSLATIONS = {
     "online.eyebrow": "Debate en línea",
     "online.title": "Debate con alguien en otro dispositivo.",
     "online.lead": "Dos cuentas, dos dispositivos, una ronda compartida. Todavía no hay un canal de audio compartido entre dispositivos — para las fases de crossfire o discusión, coordínense por llamada o en persona; Verdict AI sincroniza los turnos, la transcripción y los puntajes entre ustedes.",
+
+    "setup.mode.format": "Formato",
+    "setup.practice.desc": "Práctica en solitario contra el reloj — no necesitas oponente. Obtén un informe completo de retroalimentación del juez de IA después, y vuelve a hacer el mismo discurso para ver si tu puntuación mejora. Funciona con el modo Casual (te cambia ahí automáticamente).",
+    "setup.topic.customlabel": "O escribe un tema / resolución personalizado",
+    "setup.topic.customph": "p. ej. Resuelto: El gobierno federal de los Estados Unidos debería reformar significativamente su política de inmigración.",
+    "setup.rounds.numrounds": "Número de rondas",
+    "setup.rounds.seconds": "Segundos por turno",
+    "setup.rounds.format": "Formato",
+    "setup.rounds.formatalt": "Alternado (A → B → A → B)",
+    "setup.rounds.formatfull": "Ronda completa (A, luego B)",
+    "setup.debaters.phA": "Debatiente A",
+    "setup.debaters.phB": "Debatiente B",
+    "setup.league.label": "Código de liga (opcional)",
+    "setup.league.label2": "Código de liga",
+    "setup.league.note": "Si tu entrenador te dio un código, los resultados se agregan al panel de tu liga. Esto no es una contraseña — cualquiera con el código puede verlo o enviar resultados.",
+    "setup.lang.label": "Idioma (reconocimiento de voz)",
+    "setup.lang.enus": "Inglés (EE. UU.)", "setup.lang.engb": "Inglés (Reino Unido)", "setup.lang.enonly": "Inglés",
+    "setup.lang.es": "Español", "setup.lang.fr": "Francés", "setup.lang.de": "Alemán", "setup.lang.it": "Italiano",
+    "setup.lang.pt": "Portugués (BR)", "setup.lang.pl": "Polaco", "setup.lang.ja": "Japonés", "setup.lang.zh": "Chino (mandarín)",
+    "setup.points.enable": "Activar puntuación",
+    "setup.points.enabledesc": "Registra hechos verificados, afirmaciones falsas y falacias lógicas. Desactívalo para un modo de discusión pura.",
+    "setup.points.factlabel": "Puntos por un hecho verificado (+)",
+    "setup.points.wronglabel": "Penalización por un hecho incorrecto (−)",
+    "setup.points.fallacylabel": "Penalización por una falacia lógica (−)",
+    "setup.ai.autofc": "Verificación automática de datos",
+    "setup.ai.autofcdesc": "Escucha a cada orador en tiempo real. En el momento en que sale una afirmación fáctica de la boca de alguien, la pantalla destella en verde (+fact) si es correcta o en rojo (−wrong) si no lo es.",
+    "setup.ai.fcengine": "Motor de verificación de datos",
+    "setup.ai.fcstandard": "Estándar (rápido)",
+    "setup.ai.model": "Modelo",
+    "setup.ai.testconn": "Probar conexión",
+    "setup.ai.whisper": "Transcripción de alta precisión",
+    "setup.ai.whisperdesc": "Un modo de escucha más preciso para acentos, términos técnicos y salas ruidosas — captura audio en ráfagas cortas en lugar de depender del reconocimiento de voz integrado de tu navegador.",
+    "setup.ai.autofallacy": "Detección automática de falacias",
+    "setup.ai.autofallacydesc": "Una segunda pasada de IA vigila falacias lógicas clásicas (ad hominem, hombre de paja, etc.) y muestra sugerencias en una bandeja. Haz clic en \"Confirmar\" para aplicar la penalización.",
+    "setup.ai.respect": "Filtro de respeto",
+    "setup.ai.respectdesc": "Una tercera pasada de IA vigila insultos, lenguaje discriminatorio o ataques personales — nunca la discusión legítima de temas sensibles. En el Modo práctica te aconseja en privado cómo reformular; en una ronda en vivo alerta discretamente al panel de moderación (abajo a la derecha) en lugar de interrumpir o penalizar automáticamente.",
+    "setup.ai.verdictpoints": "Veredicto por puntos",
+    "setup.ai.verdictpointsdesc": "Al final, anuncia al ganador según el total de puntos, con comentarios sobre el conteo.",
+    "setup.ai.verdictsubstance": "Veredicto por sustancia",
+    "setup.ai.verdictsubstancedesc": "Analiza los argumentos reales en las transcripciones y decide quién presentó el caso más sólido.",
+    "setup.ai.judgepersona": "Perfil de juez (Simulador de juez)",
+    "setup.ai.judgepersonanote": "Elige quién juzga antes de la ronda — un juez lego, un juez de flow, un juez técnico y más, cada uno puntúa distinto. Después de la ronda, usa \"Probar otro perfil de juez\" en Resultados para ver cómo cambia la decisión.",
+    "setup.ai.engine": "Motor del juez de IA",
+    "setup.ai.enginestandard": "Estándar (recomendado)", "setup.ai.engineclaude": "Claude", "setup.ai.enginegpt": "GPT",
+    "setup.ai.enginenone": "Ninguno — solo puntuación básica",
+    "setup.ai.apikey": "Clave de API (déjalo en blanco para usar la predeterminada)",
+    "setup.ai.apikeyph": "Déjalo en blanco a menos que uses tu propia clave",
+    "setup.ai.apikeynote": "La mayoría de las configuraciones nunca necesitan esto — la app ya viene lista para usar. Complétalo solo si estás autoalojando la app con tu propia clave.",
+
+    "debate.startturn": "Iniciar turno", "debate.pause": "Pausar", "debate.skip": "Saltar →", "debate.end": "Terminar debate",
+    "debate.undolabel": "Reciente · clic para deshacer", "debate.clearall": "Borrar todo",
+    "debate.verified": "verificado", "debate.falseclaim": "afirmación falsa", "debate.badlogic": "mala lógica",
+    "debate.facts": "hechos", "debate.wrong": "incorrectos", "debate.fallacies": "falacias",
+    "debate.livesubtitles": "Subtítulos en vivo", "debate.copy": "Copiar", "debate.clear": "Limpiar",
+    "debate.subtitlesempty": "Inicia un turno y habla — tus palabras aparecerán aquí en tiempo real.",
+    "debate.factcheckthis": "Verificar esto",
+    "debate.factcheck": "Verificación de datos", "debate.factcheck.note": "Verificado por IA · contrastado con Wikipedia",
+    "debate.factcheck.ph": "Escribe una afirmación y presiona Enter — destella verde/rojo como la verificación automática",
+    "debate.search": "Buscar", "debate.google": "Google",
+    "debate.factcheck.disclaimer": "Si un turno está activo y el veredicto es confiable, el orador actual anota automáticamente (+fact si es verdadero, −wrong si es falso). Las búsquedas fuera de turno solo destellan sin puntuar.",
+
+    "results.winner": "Ganador", "results.tryjudge": "Probar otro perfil de juez",
+    "results.runanalysis": "Ejecutar análisis avanzado de argumentos", "results.rematch": "Revancha",
+    "results.export": "Exportar transcripción", "results.newdebate": "Nuevo debate",
+
+    "online.signin": "Inicia sesión primero",
+    "online.signindesc": "El debate en línea necesita una cuenta en ambos lados para saber quién es quién.",
+    "online.loginsignup": "Iniciar sesión o registrarte",
+    "online.host": "Crear una sala", "online.format": "Formato",
+    "online.secondsperturn": "Segundos por turno (solo Casual)",
+    "online.topic": "Tema",
+    "online.topicph": "p. ej. Resuelto: El gobierno federal de los Estados Unidos debería reformar significativamente su política de inmigración.",
+    "online.createroom": "Crear sala", "online.join": "Unirse a una sala", "online.roomcode": "Código de sala",
+    "online.joinbtn": "Unirse",
+    "online.waiting": "Esperando a tu oponente",
+    "online.waitingdesc": "Comparte este código — lo ingresarán en \"Unirse a una sala\" en su propio dispositivo:",
+    "online.cancel": "Cancelar", "online.endturn": "Terminar turno →", "online.continue": "Continuar",
+    "online.waitingturn": "Esperando a que tu oponente termine su turno…",
+    "online.live": "En vivo", "online.nothingyet": "Todavía nada.", "online.transcriptsofar": "Transcripción hasta ahora",
+    "online.complete": "Debate finalizado", "online.aijudge": "Juez de IA",
+    "online.judgepersonaoptional": "Perfil de juez (opcional)", "online.runjudge": "Ejecutar juez de IA",
+    "online.fulltranscript": "Transcripción completa", "online.backtolobby": "Volver al lobby",
+
+    "upload.eyebrow": "Modo de carga", "upload.title": "Puntúa un debate grabado.",
+    "upload.lead": "Sube un archivo de video o audio de un debate y lo transcribiremos, atribuiremos cada turno a un lado, verificaremos cada afirmación, marcaremos falacias y produciremos el mismo desglose por lado que ofrece el modo en vivo.",
+    "upload.step1": "1. Elige un archivo",
+    "upload.dropcta": "Haz clic para elegir un archivo o suéltalo aquí",
+    "upload.drophint": "Se admite la mayoría de formatos de video y audio. Extraemos el audio en tu navegador — nada va a nuestros servidores; el audio solo va a nuestro motor de transcripción.",
+    "upload.step2": "2. Cuéntanos sobre el debate",
+    "upload.sidea": "Nombre del lado A", "upload.sideaph": "p. ej. Alicia",
+    "upload.sideb": "Nombre del lado B", "upload.sidebph": "p. ej. Roberto",
+    "upload.debatetopic": "Tema del debate", "upload.debatetopicph": "p. ej. ¿Debería la renta básica universal reemplazar a la asistencia social?",
+    "upload.spokenlang": "Idioma hablado",
+    "upload.lang.pt": "Portugués", "upload.lang.nl": "Neerlandés", "upload.lang.ko": "Coreano",
+    "upload.lang.zh": "Chino", "upload.lang.auto": "Detección automática",
+    "upload.step3": "3. Ejecuta el análisis",
+    "upload.step3note": "Un debate de 30 minutos tarda aproximadamente entre 60 y 90 segundos en transcribirse y de 1 a 2 minutos en puntuarse, según la densidad del habla.",
+    "upload.analyse": "Analizar debate",
+
+    "casebuilder.topic": "Tema / resolución",
+    "casebuilder.topicph": "p. ej. Resuelto: El gobierno federal de los Estados Unidos debería reformar significativamente su política de inmigración.",
+    "casebuilder.yourside": "Tu lado", "casebuilder.pro": "Pro / Afirmativo", "casebuilder.con": "Con / Negativo",
+    "casebuilder.angle": "Ángulo o enfoque (opcional)",
+    "casebuilder.angleph": "p. ej. enfócate en el impacto económico, evita el enfoque de derechos",
+    "casebuilder.build": "Construir mi esquema de caso",
+
+    "casecheck.step1": "1. Pega tu caso",
+    "casecheck.topic": "Tema (opcional, ayuda a la revisión)",
+    "casecheck.casetext": "Texto del caso",
+    "casecheck.casetextph": "Pega aquí tu discurso constructivo, esquema de caso o resumen...",
+    "casecheck.check": "Revisar mi caso",
+
+    "league.load": "Cargar panel",
+
+    "how.eyebrow": "Cómo funciona Verdict AI",
+    "how.h1": "De \"está hablando\" a \"punto anotado\" — en menos de un segundo.",
+    "how.lead": "Di algo verdadero y la pantalla destella en verde antes de que termines tu siguiente respiración. Di algo falso y destella en rojo. Nadie levanta la mano para verificar lo que dijiste — ya está hecho. Así es la maquinaria detrás de eso, ronda por ronda.",
+    "how.s1.title": "Configuración",
+    "how.s1.p1": "Seis formatos, una sola pantalla. Elige Public Forum y todo el orden de intervenciones se organiza solo — discursos constructivos, crossfires, resúmenes, enfoque final, límites de tiempo reales, cero adivinanzas. Parliamentary sigue la secuencia real PMC → LOC → MG → MO → LOR → PMR. El modo Casual prescinde de todo eso — solo defines las rondas, el reloj y si los lados se alternan.",
+    "how.s1.p2": "Elige un tema — uno predefinido o el tuyo — nombra a los debatientes, define tu idioma hablado, decide cuánto valen los puntos y elige si un juez de IA opinará al final.",
+    "how.s2.title": "Captura de voz en vivo",
+    "how.s2.p1": "Presiona iniciar y el micrófono se activa. Las palabras aparecen casi tan rápido como las dices — tenues al principio, mientras el reconocedor todavía decide qué escuchó, y luego se fijan una vez que está seguro. Esa luz del micrófono no es decoración; es la única prueba de que alguien realmente está escuchando.",
+    "how.s2.p2": "Y mientras estás a mitad de tu siguiente frase, la que acabas de terminar ya se está verificando entre bambalinas.",
+    "how.s3.title": "Detección de afirmaciones y verificación de datos",
+    "how.s3.p1": "Cada frase tiene que superar dos preguntas antes de que pase algo:",
+    "how.s3.li1": "<b>¿Hay realmente una afirmación fáctica aquí?</b> (Las opiniones, preguntas, muletillas y predicciones se omiten — no te penalizarán por decir \"yo creo\".)",
+    "how.s3.li2": "<b>¿Esa afirmación es verdadera o falsa</b>, según conocimiento público bien establecido?",
+    "how.s3.p2": "Las verificaciones están espaciadas a propósito — no se acumulan a mitad de un discurso, no vuelven a revisar algo que ya dijiste, y guardan silencio durante el crossfire, porque ni siquiera nosotros podemos distinguir quién habla sobre quién.",
+    "how.s4.title": "Retroalimentación instantánea",
+    "how.s4.p1": "El veredicto llega rápido, y solo puede ir de tres maneras:",
+    "how.s4.li1": "<b>Verificado</b> — la pantalla destella en verde, suena un tono agudo breve, y el orador recibe <code>+fact</code>.",
+    "how.s4.li2": "<b>Falso</b> — la pantalla destella en rojo, suena un tono grave, y el orador pierde <code>−wrong</code>.",
+    "how.s4.li3": "<b>No está claro</b> o no es realmente una afirmación — un banner muestra brevemente lo que encontró, pero no se mueven puntos.",
+    "how.s4.p2": "Un banner muestra la afirmación en lenguaje sencillo, una línea de razonamiento y quién acaba de anotar. Cada una de estas decisiones queda etiquetada como <code>· auto</code> en la bandeja de deshacer, por si la máquina se equivocó y necesitas corregirlo.",
+    "how.s5.title": "Puntuación manual y falacias",
+    "how.s5.p1": "La IA no tiene la última palabra — la tienes tú. ¿Se te escapó una afirmación? Presiona <b>+fact</b> o <b>−wrong</b> tú mismo. ¿Escuchaste pasar un hombre de paja o una pendiente resbaladiza? El botón <b>−fallacy</b> despliega las 16 — elige la que corresponda y descuenta el punto, etiquetando la transcripción justo donde ocurrió.",
+    "how.s5.p2": "O sáltate el botón por completo — resalta la frase tú mismo en los subtítulos en vivo y aparecerá un atajo de \"Verificar esto\", que ejecuta exactamente la misma verificación a demanda.",
+    "how.s6.title": "Fin del debate",
+    "how.s6.p1": "Cuando se acaba el tiempo — o tú mismo lo terminas — todo llega a Resultados: puntuaciones finales, el conteo de hechos / errores / falacias de cada lado, un resumen de los mejores momentos marcados y la transcripción completa, lista para exportar.",
+    "how.s6.p2": "Activa el <b>Juicio de IA</b> y también obtendrás un veredicto real — uno basado en puntos que simplemente hace la cuenta, o uno basado en la sustancia que lee toda la transcripción y decide quién presentó el argumento más sólido.",
+    "how.s7.title": "Los seis formatos de un vistazo",
+    "how.table.format": "Formato", "how.table.sides": "Lados", "how.table.structure": "Estructura",
+    "how.table.r1.f": "<b>Casual</b>", "how.table.r1.s": "Debatiente A vs B", "how.table.r1.st": "Rondas y temporizador configurables.",
+    "how.table.r2.f": "<b>Public Forum</b>", "how.table.r2.s": "Pro vs Con", "how.table.r2.st": "Constructivos · refutaciones · resúmenes · tres crossfires · enfoque final.",
+    "how.table.r3.f": "<b>Lincoln-Douglas</b>", "how.table.r3.s": "Afirmativo vs Negativo", "how.table.r3.st": "Debate de valores uno contra uno; AC · NC con contrainterrogatorio · 1AR · NR · 2AR.",
+    "how.table.r4.f": "<b>Policy (CX)</b>", "how.table.r4.s": "Afirmativo vs Negativo", "how.table.r4.st": "Muy centrado en evidencia; cuatro constructivos, cuatro contrainterrogatorios, cuatro refutaciones.",
+    "how.table.r5.f": "<b>Parliamentary</b>", "how.table.r5.s": "Gobierno vs Oposición", "how.table.r5.st": "PMC · LOC · MG · MO · LOR · PMR. Se esperan puntos de información.",
+    "how.table.r6.f": "<b>Mock Trial</b>", "how.table.r6.s": "Fiscalía vs Defensa", "how.table.r6.st": "Aperturas · interrogatorio directo y contrainterrogatorio por testigo · cierres · réplica.",
+    "how.privacy.title": "Privacidad",
+    "how.privacy.p": "Tu audio nunca sale de tu navegador. Lo único que se envía es el texto de la frase que se está verificando, nada más — ni una grabación, ni la ronda anterior, ni tu nombre. Nada se almacena después. Y si el verificador de datos no puede contactar a su motor por cualquier razón, no te muestra un error — simplemente se queda en silencio y te devuelve el control, y la app sigue funcionando en modo totalmente manual como si nada hubiera pasado.",
+    "how.overrule.title": "Cuándo anular a la IA",
+    "how.overrule.p": "A veces se equivocará — las estadísticas, los eventos muy recientes y todo lo que dependa de la redacción exacta son donde más tropieza. Está calibrado para quedarse callado a menos que esté genuinamente seguro, pero \"genuinamente seguro\" todavía no es \"certeza\". Presta atención al banner. Si una decisión parece incorrecta, probablemente lo sea — <b>deshacer</b> está a un clic de distancia en la bandeja, siempre.",
+    "how.backtosetup": "Volver a configuración",
+
+    "footer.tos": "Términos de servicio", "footer.privacy": "Política de privacidad",
+    "footer.aidisclaimer": "Las decisiones de la IA pueden estar equivocadas — tú siempre tienes la última palabra.",
+
+    "modal.cancel": "Cancelar",
+    "modal.fallacy.title": "Elige la falacia",
+    "modal.fallacy.sub": "Toca la que mejor encaje. Descuenta <span id=\"fallacy-penalty-txt\">2</span> punto(s). Puedes deshacerlo desde la bandeja.",
+    "modal.judge.title": "Ejecutar otro perfil de juez",
+    "modal.judge.sub": "Vuelve a juzgar esta misma ronda desde la perspectiva de otro juez y compara la decisión.",
+    "modal.tos.sub": "Última actualización: <span id=\"tos-date\"></span> · Consulta también nuestra <a href=\"javascript:void(0)\" onclick=\"closeTosModal(); openPrivacyModal();\">Política de privacidad</a>",
+    "modal.privacy.sub": "Última actualización: <span id=\"privacy-date\"></span> · Consulta también nuestros <a href=\"javascript:void(0)\" onclick=\"closePrivacyModal(); openTosModal();\">Términos de servicio</a>",
+
+    "auth.login": "Iniciar sesión", "auth.signup": "Registrarse",
+    "auth.needsignup": "¿Necesitas una cuenta? Regístrate", "auth.havelogin": "¿Ya tienes una cuenta? Inicia sesión",
+    "auth.optional": "Opcional — Verdict AI funciona completamente sin una cuenta. Iniciar sesión solo sincroniza tu progreso entre dispositivos.",
+    "auth.displayname": "Nombre para mostrar", "auth.displaynameph": "p. ej. Jordan",
+    "auth.email": "Correo electrónico", "auth.password": "Contraseña", "auth.passwordph": "Al menos 8 caracteres",
+    "auth.agree": "Al continuar, aceptas los <a href=\"javascript:void(0)\" onclick=\"openTosModal()\">Términos de servicio</a> y la <a href=\"javascript:void(0)\" onclick=\"openPrivacyModal()\">Política de privacidad</a>.",
+
+    "profile.title": "Tu perfil",
+    "profile.visible": "Visible solo para ti por ahora — los perfiles todavía no se muestran a otros usuarios.",
+    "profile.changephoto": "Cambiar foto", "profile.remove": "Eliminar",
+    "profile.bio": "Biografía", "profile.bioph": "Una o dos frases — tus eventos, tu liga, lo que quieras.",
+    "profile.save": "Guardar",
+
+    "cookie.text": "Verdict AI funciona con el almacenamiento local de tu navegador — y, si inicias sesión, un token de acceso — en lugar de cookies de rastreo publicitario.\n    <a href=\"javascript:void(0)\" onclick=\"openPrivacyModal()\">Política de privacidad</a>",
+    "cookie.gotit": "Entendido",
   },
 };
 
@@ -4101,6 +4473,15 @@ function applyTranslations(lang) {
     const key = el.getAttribute("data-i18n");
     const text = dict[key] || TRANSLATIONS.en[key];
     if (text) el.textContent = text;
+  });
+  // Same idea, but for elements whose English text has inline markup
+  // (<b>, <code>, etc.) that a plain textContent swap would destroy.
+  // Safe to use innerHTML here — the source is always our own hardcoded
+  // TRANSLATIONS dict, never user input.
+  document.querySelectorAll("[data-i18n-html]").forEach(el => {
+    const key = el.getAttribute("data-i18n-html");
+    const text = dict[key] || TRANSLATIONS.en[key];
+    if (text) el.innerHTML = text;
   });
   document.querySelectorAll("[data-i18n-ph]").forEach(el => {
     const key = el.getAttribute("data-i18n-ph");
@@ -4113,6 +4494,18 @@ function applyTranslations(lang) {
 function setUILang(lang) {
   try { localStorage.setItem("calledout_ui_lang", lang); } catch (e) {}
   applyTranslations(lang);
+}
+
+function currentUILang() {
+  try { return localStorage.getItem("calledout_ui_lang") || "en"; } catch (e) { return "en"; }
+}
+
+// Lookup for JS-rendered strings (toasts, dynamically-swapped button/label
+// text) that data-i18n can't reach because they're set via textContent at
+// runtime, not present in the initial HTML.
+function t(key) {
+  const dict = TRANSLATIONS[currentUILang()] || TRANSLATIONS.en;
+  return dict[key] || TRANSLATIONS.en[key] || key;
 }
 
 /* =========================================================================
@@ -5375,10 +5768,10 @@ function toggleAuthMode() {
 
 function syncAuthModeUI() {
   const isSignup = authMode === "signup";
-  document.getElementById("auth-modal-title").textContent = isSignup ? "Sign up" : "Log in";
+  document.getElementById("auth-modal-title").textContent = isSignup ? t("auth.signup") : t("auth.login");
   document.getElementById("auth-name-field").style.display = isSignup ? "" : "none";
-  document.getElementById("auth-submit-btn").textContent = isSignup ? "Sign up" : "Log in";
-  document.getElementById("auth-toggle-btn").textContent = isSignup ? "Already have an account? Log in" : "Need an account? Sign up";
+  document.getElementById("auth-submit-btn").textContent = isSignup ? t("auth.signup") : t("auth.login");
+  document.getElementById("auth-toggle-btn").textContent = isSignup ? t("auth.havelogin") : t("auth.needsignup");
 }
 
 async function submitAuth() {
