@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="description" content="Verdict AI — live debate scoring with real-time fact-checking, fallacy detection, and AI judging for Public Forum, Lincoln-Douglas, Policy, Parliamentary, and Mock Trial." />
 <title>Verdict AI</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%230b0a09' stroke='%23b3141f' stroke-width='3'/%3E%3Cpath d='M11 11L21 21M21 11L11 21' stroke='%23b3141f' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%230c0a0a' stroke='%23e11d48' stroke-width='3'/%3E%3Cpath d='M11 11L21 21M21 11L11 21' stroke='%23e11d48' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b0a09;
-    --surface: #161513;
-    --surface-2: #1e1c19;
-    --surface-3: #292623;
-    --border: rgba(241, 239, 232, 0.08);
-    --border-strong: rgba(241, 239, 232, 0.2);
-    --text: #f2f0ea;
-    --text-dim: #a6a29b;
-    --text-faint: #6b6862;
+    --bg: #090909;
+    --surface: #151515;
+    --surface-2: #1d1d1d;
+    --surface-3: #262626;
+    --border: rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(255, 255, 255, 0.22);
+    --text: #f1f1f0;
+    --text-dim: #a3a1a0;
+    --text-faint: #656362;
     --accent: #b3141f;
     --accent-hover: #8a0f18;
     --accent-soft: rgba(179, 20, 31, 0.16);
@@ -32,7 +32,7 @@
     --blue: #3b82f6;
     --radius: 3px;
     --radius-lg: 3px;
-    --cut: 11px;
+    --cut: 14px;
     --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
     --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
@@ -175,9 +175,8 @@
   .hero h1 {
     font-size: clamp(32px, 4.8vw, 54px);
     font-weight: 600;
-    font-variation-settings: "opsz" 144;
     letter-spacing: -0.02em;
-    line-height: 1.04;
+    line-height: 1.06;
     color: var(--text);
     margin-bottom: 12px;
     max-width: 740px;
@@ -210,7 +209,6 @@
   .undo-tray, .fallacy-lib-card {
     position: relative;
     clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
-    box-shadow: 0 1px 0 rgba(241, 239, 232, 0.03) inset, 0 10px 28px rgba(0, 0, 0, 0.22);
   }
   .card::after, .verdict-card::after, .result-card::after, .debater-panel::after,
   .stage::after, .mode-preview::after, .undo-tray::after, .fallacy-lib-card::after {
@@ -578,6 +576,7 @@
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s, transform 0.1s;
     text-decoration: none;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
   }
 
   .btn:hover { background: var(--surface-2); border-color: var(--text-dim); transform: translateY(-1px); }
@@ -4159,7 +4158,7 @@ const TRANSLATIONS = {
     "how.s2.title": "Live speech capture",
     "how.s2.p1": "Hit start and the mic goes live. Words show up almost as fast as you say them — faded at first, while the recognizer's still deciding what it heard, then locked in solid once it's sure. That mic light isn't decoration; it's the only proof anyone's actually listening.",
     "how.s2.p2": "And while you're mid-sentence on your next point, the one you just finished is already getting checked behind the scenes.",
-    "how.s3.title": "Claim detection & fact-check",
+    "how.s3.title": "Claim detection &amp; fact-check",
     "how.s3.p1": "Every sentence has to clear two questions before anything happens:",
     "how.s3.li1": "<b>Is there an actual factual claim here?</b> (Opinions, questions, filler, and predictions get skipped — you won't get dinged for saying \"I think.\")",
     "how.s3.li2": "<b>Is that claim true or false</b>, based on well-established public knowledge?",
@@ -4170,7 +4169,7 @@ const TRANSLATIONS = {
     "how.s4.li2": "<b>False</b> — screen flashes red, a low tone plays, and the speaker loses <code>−wrong</code>.",
     "how.s4.li3": "<b>Unclear</b> or not really a claim — a banner briefly shows what it found, but no points move.",
     "how.s4.p2": "A banner surfaces the claim in plain English, one line of reasoning, and whoever just got scored. Every one of these calls is tagged <code>· auto</code> in the undo tray, in case the machine got it wrong and you need to say so.",
-    "how.s5.title": "Manual scoring & fallacies",
+    "how.s5.title": "Manual scoring &amp; fallacies",
     "how.s5.p1": "The AI doesn't get the final word — you do. Missed a claim? Hit <b>+fact</b> or <b>−wrong</b> yourself. Heard a straw man or a slippery slope slide by? The <b>−fallacy</b> button pulls up all 16 — pick the one that fits and it docks the point and tags the transcript right where it happened.",
     "how.s5.p2": "Or skip the button entirely — highlight the phrase yourself in the live subtitles and a \"Fact-check this\" shortcut pops up, running the exact same check on demand.",
     "how.s6.title": "End of debate",
@@ -4178,12 +4177,12 @@ const TRANSLATIONS = {
     "how.s6.p2": "Turn on <b>AI Judging</b> and you also get an actual verdict — a points-based one that just does the math, or a substance-based one that reads the whole transcript and calls who made the stronger argument.",
     "how.s7.title": "The six formats at a glance",
     "how.table.format": "Format", "how.table.sides": "Sides", "how.table.structure": "Structure",
-    "how.table.r1.f": "<b>Casual</b>", "how.table.r1.s": "Debater A vs B", "how.table.r1.st": "Configurable rounds & timer.",
+    "how.table.r1.f": "<b>Casual</b>", "how.table.r1.s": "Debater A vs B", "how.table.r1.st": "Configurable rounds &amp; timer.",
     "how.table.r2.f": "<b>Public Forum</b>", "how.table.r2.s": "Pro vs Con", "how.table.r2.st": "Constructives · rebuttals · summaries · three crossfires · final focus.",
     "how.table.r3.f": "<b>Lincoln-Douglas</b>", "how.table.r3.s": "Affirmative vs Negative", "how.table.r3.st": "1-on-1 values debate; AC · NC with cross-ex · 1AR · NR · 2AR.",
     "how.table.r4.f": "<b>Policy (CX)</b>", "how.table.r4.s": "Affirmative vs Negative", "how.table.r4.st": "Evidence-heavy; four constructives, four cross-exams, four rebuttals.",
     "how.table.r5.f": "<b>Parliamentary</b>", "how.table.r5.s": "Government vs Opposition", "how.table.r5.st": "PMC · LOC · MG · MO · LOR · PMR. Points of information expected.",
-    "how.table.r6.f": "<b>Mock Trial</b>", "how.table.r6.s": "Prosecution vs Defense", "how.table.r6.st": "Openings · direct & cross exams per witness · closings · rebuttal.",
+    "how.table.r6.f": "<b>Mock Trial</b>", "how.table.r6.s": "Prosecution vs Defense", "how.table.r6.st": "Openings · direct &amp; cross exams per witness · closings · rebuttal.",
     "how.privacy.title": "Privacy",
     "how.privacy.p": "Your audio never leaves your browser. What gets sent out is the text of the one sentence being checked, nothing more — not a recording, not the round before it, not your name. Nothing is stored anywhere afterward. And if the fact-checker can't reach its engine for any reason, it doesn't throw an error at you — it just goes quiet and hands control back, and the app keeps running in fully-manual mode like nothing happened.",
     "how.overrule.title": "When to overrule the AI",
