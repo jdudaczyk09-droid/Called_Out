@@ -7263,6 +7263,7 @@ ${lines}`;
         model,
         temperature: 0.1,
         max_tokens: 8192,
+        reasoning_effort: "low",
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: "You label debate transcripts. Reply with JSON only." },
@@ -7893,7 +7894,8 @@ async function groqClaimCheck(sentence, opts) {
     body: JSON.stringify({
       model,
       temperature: 0.1,
-      max_tokens: 600,
+      max_tokens: 900,
+      reasoning_effort: "low",
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: "You are a strict fact-checker that responds with JSON only, no prose." },
@@ -7972,7 +7974,8 @@ async function groqFallacyCheck(sentence, opts) {
     body: JSON.stringify({
       model,
       temperature: 0.1,
-      max_tokens: 500,
+      max_tokens: 800,
+      reasoning_effort: "low",
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: "You are a strict debate-fallacy spotter that responds with JSON only, no prose." },
