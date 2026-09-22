@@ -3215,7 +3215,7 @@
 
         <div class="card upload-card">
           <h3 data-i18n="upload.step3">3. Run the analysis</h3>
-          <p class="upload-note" data-i18n="upload.step3note">A 30-minute debate takes roughly 60–90 seconds to transcribe and 1–2 minutes to score, depending on speech density.</p>
+          <p class="upload-note" data-i18n="upload.step3note">Transcribing takes roughly 60–90 seconds per 30 minutes of audio. Scoring is paced to stay within free-tier API rate limits — expect several seconds per speaker turn, so longer or more talkative debates take proportionally longer.</p>
           <button id="upload-go" class="btn btn-primary" onclick="runUploadAnalysis()" disabled data-i18n="upload.analyse">Analyse debate</button>
           <div id="upload-progress" class="upload-progress" style="display:none;"></div>
           <div id="upload-error" class="upload-error" style="display:none;"></div>
@@ -4132,7 +4132,7 @@ const TRANSLATIONS = {
     "upload.lang.pt": "Portuguese", "upload.lang.nl": "Dutch", "upload.lang.ko": "Korean",
     "upload.lang.zh": "Chinese", "upload.lang.auto": "Auto-detect",
     "upload.step3": "3. Run the analysis",
-    "upload.step3note": "A 30-minute debate takes roughly 60–90 seconds to transcribe and 1–2 minutes to score, depending on speech density.",
+    "upload.step3note": "Transcribing takes roughly 60–90 seconds per 30 minutes of audio. Scoring is paced to stay within free-tier API rate limits — expect several seconds per speaker turn, so longer or more talkative debates take proportionally longer.",
     "upload.analyse": "Analyse debate",
 
     "casebuilder.topic": "Topic / resolution",
@@ -4349,7 +4349,7 @@ const TRANSLATIONS = {
     "upload.lang.pt": "Portugués", "upload.lang.nl": "Neerlandés", "upload.lang.ko": "Coreano",
     "upload.lang.zh": "Chino", "upload.lang.auto": "Detección automática",
     "upload.step3": "3. Ejecuta el análisis",
-    "upload.step3note": "Un debate de 30 minutos tarda aproximadamente entre 60 y 90 segundos en transcribirse y de 1 a 2 minutos en puntuarse, según la densidad del habla.",
+    "upload.step3note": "La transcripción tarda entre 60 y 90 segundos por cada 30 minutos de audio. La puntuación se ajusta para respetar los límites de la API gratuita — espera varios segundos por turno de intervención, así que los debates más largos o con más intervenciones tardan proporcionalmente más.",
     "upload.analyse": "Analizar debate",
 
     "casebuilder.topic": "Tema / resolución",
@@ -7327,24 +7327,30 @@ async function scoreLabeledSegments(segments, topic, onProgress) {
   const recentBySide = { a: [], b: [] };
   const ctxN = cfg.CONTEXT_SENTENCES ?? 3;
 
+  // Groq's free-tier TPM cap means these can't all fire at once (or even in
+  // fast back-to-back pairs) on a transcript of any real length — see
+  // UPLOAD_SEGMENT_PACING_MS. Run claim-check then fallacy-check one at a
+  // time per segment, and pace the gap between segments.
+  const segmentPacingMs = Math.max(0, Number(cfg.UPLOAD_SEGMENT_PACING_MS ?? 0));
+
   for (let i = 0; i < segments.length; i++) {
     const seg = segments[i];
     if (onProgress) onProgress(`Segment ${i + 1} of ${segments.length}…`);
 
+    if (i > 0 && segmentPacingMs) await new Promise(r => setTimeout(r, segmentPacingMs));
+
     const turnEvents = [];
     const sourceName = "AI";
 
-    // Run claim check + fallacy check in parallel for this segment
     const promptOpts = { topic, context: recentBySide[seg.side].slice(-ctxN) };
     const evidence = cfg.USE_WIKIPEDIA_GROUNDING ? await fetchWikiContext(seg.text).catch(() => []) : [];
-    const claimP = runClaimCheck(seg.text, Object.assign({}, promptOpts, { evidence })).catch(e => {
+    const claimRaw = await runClaimCheck(seg.text, Object.assign({}, promptOpts, { evidence })).catch(e => {
       console.warn("Claim check failed for segment:", e.message || e);
       return null;
     });
-    const fallP = cfg.AUTO_FALLACY_DETECTION
-      ? runFallacyCheck(seg.text, promptOpts).catch(() => ({ fallacies: [] }))
-      : Promise.resolve({ fallacies: [] });
-    const [claimRaw, fallRaw] = await Promise.all([claimP, fallP]);
+    const fallRaw = cfg.AUTO_FALLACY_DETECTION
+      ? await runFallacyCheck(seg.text, promptOpts).catch(() => ({ fallacies: [] }))
+      : { fallacies: [] };
 
     const claims = claimRaw ? normalizeClaims(claimRaw) : [];
     const fallacies = normalizeFallacies(fallRaw);

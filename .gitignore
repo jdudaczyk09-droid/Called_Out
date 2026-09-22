@@ -29,3 +29,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local test audio/video clips — not project assets
+Untitled.mp3
