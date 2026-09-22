@@ -48,8 +48,11 @@
     // through Groq's free-tier 8000 TPM cap on anything longer than a couple
     // minutes, silently dropping most checks. Serializing the two calls per
     // segment (see scoreLabeledSegments) and waiting this long between
-    // segments keeps sustained throughput under that budget.
-    UPLOAD_SEGMENT_PACING_MS: 4000,
+    // segments keeps sustained throughput under that budget. Measured
+    // against production: these two calls average ~1200 tokens requested
+    // each (~2400/segment), so 8000 TPM sustains roughly one segment per
+    // 18s at the ceiling — 20s leaves ~10% headroom.
+    UPLOAD_SEGMENT_PACING_MS: 20000,
 
     // --- UX ---
     TTS_VERDICTS: true,

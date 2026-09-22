@@ -3215,7 +3215,7 @@
 
         <div class="card upload-card">
           <h3 data-i18n="upload.step3">3. Run the analysis</h3>
-          <p class="upload-note" data-i18n="upload.step3note">Transcribing takes roughly 60–90 seconds per 30 minutes of audio. Scoring is paced to stay within free-tier API rate limits — expect several seconds per speaker turn, so longer or more talkative debates take proportionally longer.</p>
+          <p class="upload-note" data-i18n="upload.step3note">Transcribing takes roughly 60–90 seconds per 30 minutes of audio. Scoring is paced to stay within free-tier API rate limits — roughly 20 seconds per speaker turn, so a debate with many turns can take several minutes to fully score.</p>
           <button id="upload-go" class="btn btn-primary" onclick="runUploadAnalysis()" disabled data-i18n="upload.analyse">Analyse debate</button>
           <div id="upload-progress" class="upload-progress" style="display:none;"></div>
           <div id="upload-error" class="upload-error" style="display:none;"></div>
@@ -4132,7 +4132,7 @@ const TRANSLATIONS = {
     "upload.lang.pt": "Portuguese", "upload.lang.nl": "Dutch", "upload.lang.ko": "Korean",
     "upload.lang.zh": "Chinese", "upload.lang.auto": "Auto-detect",
     "upload.step3": "3. Run the analysis",
-    "upload.step3note": "Transcribing takes roughly 60–90 seconds per 30 minutes of audio. Scoring is paced to stay within free-tier API rate limits — expect several seconds per speaker turn, so longer or more talkative debates take proportionally longer.",
+    "upload.step3note": "Transcribing takes roughly 60–90 seconds per 30 minutes of audio. Scoring is paced to stay within free-tier API rate limits — roughly 20 seconds per speaker turn, so a debate with many turns can take several minutes to fully score.",
     "upload.analyse": "Analyse debate",
 
     "casebuilder.topic": "Topic / resolution",
@@ -4349,7 +4349,7 @@ const TRANSLATIONS = {
     "upload.lang.pt": "Portugués", "upload.lang.nl": "Neerlandés", "upload.lang.ko": "Coreano",
     "upload.lang.zh": "Chino", "upload.lang.auto": "Detección automática",
     "upload.step3": "3. Ejecuta el análisis",
-    "upload.step3note": "La transcripción tarda entre 60 y 90 segundos por cada 30 minutos de audio. La puntuación se ajusta para respetar los límites de la API gratuita — espera varios segundos por turno de intervención, así que los debates más largos o con más intervenciones tardan proporcionalmente más.",
+    "upload.step3note": "La transcripción tarda entre 60 y 90 segundos por cada 30 minutos de audio. La puntuación se ajusta para respetar los límites de la API gratuita — unos 20 segundos por turno de intervención, así que un debate con muchos turnos puede tardar varios minutos en puntuarse por completo.",
     "upload.analyse": "Analizar debate",
 
     "casebuilder.topic": "Tema / resolución",
