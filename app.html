@@ -7274,10 +7274,27 @@ ${lines}`;
     const data = await resp.json();
     raw = data?.choices?.[0]?.message?.content || "";
   }
-  const match = raw.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error("Speaker attribution returned no JSON.");
-  const parsed = JSON.parse(match[0]);
-  const out = (parsed.segments || [])
+  // The model is asked for one `{ "segments": [...] }` object, but on longer
+  // transcripts it sometimes instead returns several such objects back to
+  // back (occasionally wrapped in an array) rather than merging them itself.
+  // Parse defensively: try the whole response first, then fall back to
+  // pulling out every top-level {...} object and merging their segments.
+  let parsed;
+  try {
+    parsed = JSON.parse(raw.trim());
+  } catch (e) {
+    const objects = [];
+    const re = /\{(?:[^{}]|\{[^{}]*\})*\}/g;
+    let m;
+    while ((m = re.exec(raw))) {
+      try { objects.push(JSON.parse(m[0])); } catch (e2) { /* skip malformed chunk */ }
+    }
+    if (!objects.length) throw new Error("Speaker attribution returned no JSON.");
+    parsed = objects;
+  }
+  const chunks = Array.isArray(parsed) ? parsed : [parsed];
+  const out = chunks
+    .flatMap(c => (c && Array.isArray(c.segments)) ? c.segments : (Array.isArray(c) ? c : []))
     .filter(s => s && (s.side === "a" || s.side === "b") && s.text)
     .map(s => ({
       side: s.side,
