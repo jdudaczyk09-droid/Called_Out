@@ -6142,20 +6142,12 @@ function queueOnlineFactCheck(chunk) {
       const now = Date.now();
       const wait = Math.max(0, state.onlineAfcLastAt + cooldown - now);
       if (wait) await new Promise(r => setTimeout(r, wait));
+      // Claim-check and fallacy-check happen together in one Groq call
+      // inside runOneOnlineFactCheck now (see runCombinedCheck).
       await runOneOnlineFactCheck(sentence, side, { topic });
       state.onlineAfcLastAt = Date.now();
     });
 
-    if (cfg.AUTO_FALLACY_DETECTION) {
-      runFallacyCheck(sentence, { topic }).then(r => {
-        if (!state.onlineRoom || state.onlineRoom.currentSide !== side) return; // turn already moved on
-        normalizeFallacies(r).forEach(f => {
-          if (f.confidence < (cfg.AUTO_FALLACY_MIN_CONF ?? 0.65)) return;
-          scoreOnline(side, "fallacy", -2, "fallacy: " + f.fallacy);
-          toast(`${f.fallacy} — ${f.explanation}`, "warn");
-        });
-      });
-    }
     if (state.respectFilter) {
       runRespectCheck(sentence, { topic }).then(r => {
         const flag = normalizeRespectFlag(r);
@@ -6169,11 +6161,20 @@ function queueOnlineFactCheck(chunk) {
 
 async function runOneOnlineFactCheck(sentence, side, opts) {
   try {
-    const raw = await runClaimCheck(sentence, opts);
-    const claims = normalizeClaims(raw);
     const cfg = window.APP_CONFIG || {};
-    const minConf = cfg.AUTO_FACTCHECK_CONFIDENCE ?? 0.7;
+    const combined = await runCombinedCheck(sentence, Object.assign({}, opts, { wantFallacies: !!cfg.AUTO_FALLACY_DETECTION }));
     if (!state.onlineRoom || state.onlineRoom.currentSide !== side) return; // turn already moved on — stale result
+
+    if (cfg.AUTO_FALLACY_DETECTION) {
+      normalizeFallacies(combined).forEach(f => {
+        if (f.confidence < (cfg.AUTO_FALLACY_MIN_CONF ?? 0.65)) return;
+        scoreOnline(side, "fallacy", -2, "fallacy: " + f.fallacy);
+        toast(`${f.fallacy} — ${f.explanation}`, "warn");
+      });
+    }
+
+    const claims = normalizeClaims(combined);
+    const minConf = cfg.AUTO_FACTCHECK_CONFIDENCE ?? 0.7;
     claims.slice(0, 3).forEach(c => {
       if (c.confidence < minConf) return;
       if (c.verdict === "true") {
@@ -7342,18 +7343,15 @@ async function scoreLabeledSegments(segments, topic, onProgress) {
     const turnEvents = [];
     const sourceName = "AI";
 
-    const promptOpts = { topic, context: recentBySide[seg.side].slice(-ctxN) };
+    const promptOpts = { topic, context: recentBySide[seg.side].slice(-ctxN), wantFallacies: !!cfg.AUTO_FALLACY_DETECTION };
     const evidence = cfg.USE_WIKIPEDIA_GROUNDING ? await fetchWikiContext(seg.text).catch(() => []) : [];
-    const claimRaw = await runClaimCheck(seg.text, Object.assign({}, promptOpts, { evidence })).catch(e => {
-      console.warn("Claim check failed for segment:", e.message || e);
+    const combined = await runCombinedCheck(seg.text, Object.assign({}, promptOpts, { evidence })).catch(e => {
+      console.warn("Combined check failed for segment:", e.message || e);
       return null;
     });
-    const fallRaw = cfg.AUTO_FALLACY_DETECTION
-      ? await runFallacyCheck(seg.text, promptOpts).catch(() => ({ fallacies: [] }))
-      : { fallacies: [] };
 
-    const claims = claimRaw ? normalizeClaims(claimRaw) : [];
-    const fallacies = normalizeFallacies(fallRaw);
+    const claims = combined ? normalizeClaims(combined) : [];
+    const fallacies = combined ? normalizeFallacies(combined) : [];
 
     // Score every claim, capped at 3 per segment
     claims.slice(0, 3).forEach(c => {
@@ -7772,22 +7770,17 @@ function queueAutoFactCheck(chunk) {
       const now = Date.now();
       const wait = Math.max(0, state.afcLastAt + cooldown - now);
       if (wait) await new Promise(r => setTimeout(r, wait));
-      await runOneFactCheck(sentence, side, { context: priorContext });
+      // Claim-check and fallacy-check now happen together in ONE Groq call
+      // inside runOneFactCheck (see runCombinedCheck) instead of two
+      // separate requests — fallacy suggestions used to fire on their own
+      // fire-and-forget pass outside this cooldown-gated queue.
+      await runOneFactCheck(sentence, side, { context: priorContext, topic });
       state.afcLastAt = Date.now();
     });
 
-    // Parallel passes: fallacy + respect checks. Independent of the claim
-    // check — fire-and-forget so neither ever blocks scoring.
+    // Respect check stays a separate, independent pass — different concern,
+    // fire-and-forget so it never blocks scoring.
     const topic = state.topic || (document.getElementById("custom-topic")?.value || "").trim();
-    if (cfg.AUTO_FALLACY_DETECTION) {
-      runFallacyCheck(sentence, { topic, context: priorContext }).then(r => {
-        // Drop if turn already changed — a stale suggestion is worse than none
-        if (!state.timerRunning) return;
-        if (state.currentSide !== side && state.currentSide !== "both") return;
-        const list = normalizeFallacies(r);
-        list.forEach(f => pushFallacySuggestion(side, sentence, f));
-      });
-    }
     if (state.respectFilter) {
       runRespectCheck(sentence, { topic, context: priorContext }).then(r => {
         if (!state.timerRunning) return;
@@ -8006,6 +7999,151 @@ async function runFallacyCheck(sentence, opts) {
     console.warn("Fallacy check failed:", String(e.message || e));
     return { fallacies: [] };
   }
+}
+
+/* =========================================================================
+   COMBINED CLAIM + FALLACY CHECK — one Groq call instead of two.
+   Every place that used to fire a claim-check and a fallacy-check for the
+   same utterance now fires this instead: same shared system/user context
+   and one reasoning pass, roughly halving token cost per utterance. That
+   directly multiplies how many concurrent debates a fixed TPM budget can
+   support. opts.wantFallacies=false skips asking for fallacies entirely
+   (e.g. when AUTO_FALLACY_DETECTION is off).
+   ========================================================================= */
+function buildCombinedPrompt(sentence, opts) {
+  const cfg = window.APP_CONFIG || {};
+  const o = opts || {};
+  const topic = (o.topic || "").trim();
+  const ctx = Array.isArray(o.context) ? o.context.filter(Boolean) : [];
+  const evidence = Array.isArray(o.evidence) ? o.evidence.filter(Boolean) : [];
+  const wantCitations = cfg.REQUIRE_CITATIONS;
+  const wantFallacies = o.wantFallacies !== false;
+
+  const schema = `Return ONLY compact JSON — no prose, no markdown fences — with this exact shape:
+{
+  "claims": [
+    {
+      "claim": string,           // short paraphrase of one factual assertion
+      "verdict": "true" | "false" | "uncertain",
+      "confidence": number,      // 0.0 - 1.0
+      "explanation": string${wantCitations ? "," : ""}
+${wantCitations ? '      "citation": string         // <= 80 chars, name a source (e.g. "wikipedia: Ant"), "" if none' : ""}
+    }
+  ]${wantFallacies ? `,
+  "fallacies": [
+    {
+      "fallacy": string,        // EXACTLY one of the fallacy names listed below (case-sensitive)
+      "quote": string,          // <= 120 chars, the exact problematic phrase
+      "explanation": string,    // one sentence, <= 200 chars
+      "confidence": number      // 0.0 - 1.0
+    }
+  ]` : ""}
+}
+If the utterance has no verifiable factual assertion, "claims" is [].
+Extract a separate claims entry per distinct factual assertion (typically 1, sometimes 2-3).${wantFallacies ? ' If it commits no fallacy, "fallacies" is []. Never invent a fallacy name not in the list below.' : ""}`;
+
+  const blocks = [
+    `You are doing two jobs on ONE utterance from a live debate: fact-checking${wantFallacies ? " and fallacy-spotting" : ""}.`,
+    "",
+    `FACT-CHECK: Pull out every distinct verifiable factual assertion and judge each TRUE or FALSE per well-established public knowledge (taxonomy, geography, basic science, history, widely-reported facts). Opinions, questions, greetings, filler, and predictions are NOT claims. BE DECISIVE — for basic, well-established facts use confidence 0.9+ rather than defaulting to "uncertain". Only use "uncertain" for genuinely ambiguous, unverifiable, or future-hinging claims. Keep "claim" faithful to what was actually said.${wantCitations ? ' Always fill "citation" with a short attribution — "" only if truly unsourceable.' : ""}`
+  ];
+
+  if (wantFallacies) {
+    blocks.push(
+      "",
+      `FALLACY-SPOT: Decide if the utterance commits any of these classical fallacies. Be strict — only flag a clear fit, never an opinion you disagree with, a factual mistake, or a merely weak argument.`,
+      "",
+      "Fallacies:",
+      FALLACIES.map(f => `- "${f.name}": ${f.desc}`).join("\n")
+    );
+  }
+
+  blocks.push("", schema);
+
+  if (topic) blocks.push("", `Debate topic: "${topic.replace(/"/g, '\\"')}"`);
+  if (ctx.length) {
+    const joined = ctx.slice(-(cfg.CONTEXT_SENTENCES ?? 3)).map(s => `- ${s.replace(/"/g, '\\"')}`).join("\n");
+    blocks.push("", "Recent context (same speaker, earlier in this turn):", joined);
+  }
+  if (evidence.length) {
+    const ev = evidence.slice(0, 3).map((e, i) =>
+      `[${i + 1}] ${e.title ? e.title + " — " : ""}${(e.extract || "").slice(0, 320).replace(/\s+/g, " ")}`
+    ).join("\n");
+    blocks.push("", "Reference snippets (Wikipedia, may help — verify, don't trust blindly):", ev);
+  }
+  blocks.push("", `Utterance: """${sentence.replace(/"/g, '\\"')}"""`);
+  return blocks.join("\n");
+}
+
+async function groqCombinedCheck(sentence, opts) {
+  const cfg = window.APP_CONFIG || {};
+  const key = fcKey();
+  const useProxy = !key && !!cfg.PROXY_MODE;
+  if (!key && !useProxy) throw new Error("No Groq key configured (and PROXY_MODE off).");
+  const model = fcModel();
+  const url = useProxy ? "/api/groq-chat" : "https://api.groq.com/openai/v1/chat/completions";
+  const headers = useProxy
+    ? { "Content-Type": "application/json" }
+    : { "Authorization": "Bearer " + key, "Content-Type": "application/json" };
+  const resp = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model,
+      temperature: 0.1,
+      max_tokens: 1100,
+      reasoning_effort: "low",
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: "You are a strict fact-checker and fallacy-spotter that responds with JSON only, no prose." },
+        { role: "user",   content: buildCombinedPrompt(sentence, opts) }
+      ]
+    })
+  });
+  if (!resp.ok) {
+    const body = (await resp.text()).slice(0, 300);
+    throw new Error(`Groq ${resp.status}: ${body}`);
+  }
+  const data = await resp.json();
+  const raw = data?.choices?.[0]?.message?.content || "";
+  try {
+    return JSON.parse(raw.trim());
+  } catch (e) {
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error("Groq returned no JSON: " + raw.slice(0, 160));
+    return JSON.parse(match[0]);
+  }
+}
+
+/* Dispatcher with retry — same contract as runClaimCheck/runFallacyCheck
+   but returns both { claims, fallacies } from one call and shares the
+   same PER_DEBATE_BUDGET counter (so the budget now covers twice as many
+   real checks as before). */
+async function runCombinedCheck(sentence, opts) {
+  const cfg = window.APP_CONFIG || {};
+  const budget = cfg.PER_DEBATE_BUDGET ?? 0;
+  if (budget && state.budgetUsed >= budget) {
+    throw new Error(`Per-debate budget reached (${budget}). Auto fact-check paused.`);
+  }
+  const maxRetries = Math.max(0, Number(cfg.MAX_RETRIES ?? 0));
+
+  let lastErr = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const r = await groqCombinedCheck(sentence, opts);
+      state.budgetUsed++;
+      return {
+        claims: Array.isArray(r?.claims) ? r.claims : [],
+        fallacies: Array.isArray(r?.fallacies) ? r.fallacies : []
+      };
+    } catch (e) {
+      lastErr = e;
+      const m = String(e.message || "").toLowerCase();
+      if (m.includes("401") || m.includes("403") || m.includes("api key not valid")) break;
+      if (attempt < maxRetries) await new Promise(r => setTimeout(r, 250 * (attempt + 1)));
+    }
+  }
+  throw lastErr || new Error("Groq fact-check failed.");
 }
 
 /* Normalize fallacy LLM output, drop entries with bad names or low confidence,
@@ -8421,13 +8559,21 @@ async function runOneFactCheck(sentence, side, opts) {
     const evidence = cfg.USE_WIKIPEDIA_GROUNDING ? await fetchWikiContext(sentence) : [];
 
     const promptOpts = {
-      topic: state.topic || (document.getElementById("custom-topic")?.value || "").trim(),
+      topic: (opts && opts.topic) || state.topic || (document.getElementById("custom-topic")?.value || "").trim(),
       context: (opts && opts.context) || [],
-      evidence
+      evidence,
+      wantFallacies: !!cfg.AUTO_FALLACY_DETECTION
     };
-    console.log("[AFC] calling runClaimCheck →", { promptOpts });
-    const r = await runClaimCheck(sentence, promptOpts);
-    console.log("[AFC] runClaimCheck returned", r);
+    console.log("[AFC] calling runCombinedCheck →", { promptOpts });
+    const r = await runCombinedCheck(sentence, promptOpts);
+    console.log("[AFC] runCombinedCheck returned", r);
+
+    // Fallacy suggestions — independent of whether a factual claim was
+    // found, so this runs before the claims.length early-return below.
+    if (cfg.AUTO_FALLACY_DETECTION) {
+      normalizeFallacies(r).forEach(f => pushFallacySuggestion(side, sentence, f));
+    }
+
     const claims = normalizeClaims(r);
     console.log("[AFC] normalized claims:", claims);
     if (!claims.length) { console.log("[AFC] no claims extracted — banner skipped"); return; }
